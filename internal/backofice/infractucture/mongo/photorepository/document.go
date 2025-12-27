@@ -1,0 +1,27 @@
+package photorepository
+
+import (
+	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+)
+
+type photoDocument struct {
+	ID       string `bson:"_id,omitempty"`
+	Title    string `bson:"title"`
+	URL      string `bson:"url"`
+	RecipeID string `bson:"recipeId"`
+}
+
+func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {
+	primitives := r.ToPrimitives()
+	id, err := bson.ObjectIDFromHex(primitives.ID)
+	if err != nil {
+		return photoDocument{}, err
+	}
+	return photoDocument{
+		ID:       id.Hex(),
+		Title:    primitives.Title,
+		URL:      primitives.URL,
+		RecipeID: id.Hex(),
+	}, nil
+}
