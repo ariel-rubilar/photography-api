@@ -2,31 +2,21 @@ package bootstrap
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/ariel-rubilar/photography-api/internal/server"
+	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/env"
 	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo"
 	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
-	"github.com/joho/godotenv"
 )
 
 func Run() error {
 
-	if err := godotenv.Load(); err != nil {
-		return fmt.Errorf("error loading .env file: %v", err)
-	}
-
 	ctx := context.Background()
 
-	uri := os.Getenv("MONGO_URI")
+	cfg, err := env.LoadConfig()
 
-	if uri == "" {
-		return fmt.Errorf("MONGO_URI environment variable is not set")
-	}
-
-	mongoClient, err := mongo.NewMongoClient(uri)
+	mongoClient, err := mongo.NewMongoClient(cfg.MongoURI)
 
 	defer func() {
 		_ = mongoClient.Disconnect(ctx)
