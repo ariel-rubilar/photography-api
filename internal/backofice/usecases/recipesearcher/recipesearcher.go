@@ -17,5 +17,5 @@ func New(repo recipe.Repository) *Searcher {
 }
 
 func (s *Searcher) Search(ctx context.Context) ([]*recipe.Recipe, error) {
-	return s.repo.Search(ctx)
+	return s.repo.Search(ctx, recipe.Criteria{})
 }

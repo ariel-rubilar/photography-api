@@ -3,6 +3,7 @@ package reciperepository
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ariel-rubilar/photography-api/internal/backofice/recipe"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -25,9 +26,37 @@ func NewMongoRepository(client *mongo.Client) *repository {
 	}
 }
 
-func (r *repository) Search(ctx context.Context) ([]*recipe.Recipe, error) {
+func (r *repository) Search(ctx context.Context, c recipe.Criteria) ([]*recipe.Recipe, error) {
 
-	cursor, err := r.client.Database(r.database).Collection(r.collection).Find(ctx, bson.D{})
+	filter := bson.M{}
+
+	for _, f := range c.Filters {
+		switch f.Op {
+		case recipe.OpEq:
+			key := f.Field
+
+			if key == recipe.FieldID {
+				value, err := bson.ObjectIDFromHex(f.Value.(string))
+				if err != nil {
+					return nil, fmt.Errorf("invalid ObjectID format: %w", err)
+				}
+				filter["_id"] = value
+				continue
+			}
+
+			filter[string(key)] = f.Value
+
+		case recipe.OpContains:
+			value := strings.TrimSpace(f.Value.(string))
+
+			filter[string(f.Field)] = bson.M{
+				"$regex":   value,
+				"$options": "i",
+			}
+		}
+	}
+
+	cursor, err := r.client.Database(r.database).Collection(r.collection).Find(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute find query: %w", err)
 	}

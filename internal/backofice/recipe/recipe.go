@@ -40,6 +40,14 @@ func RecipeFromPrimitives(rp RecipePrimitives) Recipe {
 	}
 }
 
+func (r Recipe) ID() string {
+	return r.id
+}
+
+func (r Recipe) Name() string {
+	return r.name
+}
+
 func (r Recipe) ToPrimitives() RecipePrimitives {
 	return RecipePrimitives{
 		ID:       r.id,
