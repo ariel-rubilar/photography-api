@@ -33,12 +33,12 @@ func (s *server) Start() error {
 
 	backofficeApiGroup := backofficeGroup.Group("/api/v1")
 
-	backofficeApiGroup.GET("/recipes", searchrecipes.NewSearchRecipesHandler(s.providers.RecipeSearcher))
+	backofficeApiGroup.GET("/recipes", searchrecipes.NewHandler(s.providers.RecipeSearcher))
 
 	webGroup := s.engine.Group("/web")
 
 	webApiGroup := webGroup.Group("/api/v1")
 
-	webApiGroup.GET("/photos", searchphotos.NewSearchPhotosHandler(s.providers.PhotoSearcher))
+	webApiGroup.GET("/photos", searchphotos.NewHandler(s.providers.PhotoSearcher))
 	return s.engine.Run()
 }

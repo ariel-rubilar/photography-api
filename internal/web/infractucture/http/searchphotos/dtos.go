@@ -36,7 +36,7 @@ type searchPhotosResponse struct {
 	Data []photoDTO `json:"data"`
 }
 
-func NewSearchPhotosResponse(photos []*photo.Photo) searchPhotosResponse {
+func newSearchPhotosResponse(photos []*photo.Photo) searchPhotosResponse {
 
 	var photoDTOs []photoDTO
 

@@ -31,7 +31,7 @@ type searchPhotosResponse struct {
 	Data []recipeDTO `json:"data"`
 }
 
-func NewSearchRecipeResponse(recipes []*recipe.Recipe) searchPhotosResponse {
+func newSearchRecipesResponse(recipes []*recipe.Recipe) searchPhotosResponse {
 
 	recipeDTOs := make([]recipeDTO, 0, len(recipes))
 

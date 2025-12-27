@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewSearchPhotosHandler(searcher *searcher.Searcher) gin.HandlerFunc {
+func NewHandler(searcher *searcher.Searcher) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		photos, err := searcher.Search(c.Request.Context())
@@ -20,7 +20,7 @@ func NewSearchPhotosHandler(searcher *searcher.Searcher) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, NewSearchPhotosResponse(photos))
+		c.JSON(http.StatusOK, newSearchPhotosResponse(photos))
 
 	}
 }
