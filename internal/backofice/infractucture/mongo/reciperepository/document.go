@@ -60,28 +60,30 @@ func DocumentFromDomain(r *recipe.Recipe) (recipeDocument, error) {
 
 func (p recipeDocument) toDomain() *recipe.Recipe {
 
-	settings := recipe.NewRecipeSettings(
-		p.Settings.FilmSimulation,
-		p.Settings.DynamicRange,
-		p.Settings.Highlight,
-		p.Settings.Shadow,
-		p.Settings.Color,
-		p.Settings.NoiseReduction,
-		p.Settings.Sharpening,
-		p.Settings.Clarity,
-		p.Settings.GrainEffect,
-		p.Settings.ColorChromeEffect,
-		p.Settings.ColorChromeBlue,
-		p.Settings.WhiteBalance,
-		p.Settings.Iso,
-		p.Settings.ExposureCompensation,
-	)
+	settings := recipe.RecipeSettingsPrimitives{
+		FilmSimulation:       p.Settings.FilmSimulation,
+		DynamicRange:         p.Settings.DynamicRange,
+		Highlight:            p.Settings.Highlight,
+		Shadow:               p.Settings.Shadow,
+		Color:                p.Settings.Color,
+		NoiseReduction:       p.Settings.NoiseReduction,
+		Sharpening:           p.Settings.Sharpening,
+		Clarity:              p.Settings.Clarity,
+		GrainEffect:          p.Settings.GrainEffect,
+		ColorChromeEffect:    p.Settings.ColorChromeEffect,
+		ColorChromeBlue:      p.Settings.ColorChromeBlue,
+		WhiteBalance:         p.Settings.WhiteBalance,
+		Iso:                  p.Settings.Iso,
+		ExposureCompensation: p.Settings.ExposureCompensation,
+	}
 
-	recipe := recipe.NewRecipe(
-		p.ID.Hex(),
-		p.Name,
-		settings,
-		p.Link,
+	recipe, _ := recipe.RecipeFromPrimitives(
+		recipe.RecipePrimitives{
+			Name:     p.Name,
+			Settings: settings,
+			Link:     p.Link,
+			ID:       p.ID.Hex(),
+		},
 	)
 
 	return recipe

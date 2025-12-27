@@ -1,5 +1,28 @@
 package recipe
 
+import (
+	"fmt"
+	"strings"
+)
+
+type RecipeName struct {
+	value string
+}
+
+func NewRecipeName(value string) (RecipeName, error) {
+	value = strings.TrimSpace(value)
+	value = strings.ToLower(value)
+
+	if value == "" {
+		return RecipeName{}, fmt.Errorf("recipe name cannot be empty")
+	}
+	return RecipeName{value: value}, nil
+}
+
+func (rn RecipeName) Value() string {
+	return rn.value
+}
+
 type RecipePrimitives struct {
 	Name     string
 	Settings RecipeSettingsPrimitives
@@ -9,35 +32,32 @@ type RecipePrimitives struct {
 
 type Recipe struct {
 	id       string
-	name     string
+	name     RecipeName
 	settings RecipeSettings
 	link     string
 }
 
-func NewRecipe(id string, name string, settings RecipeSettings, link string) *Recipe {
-	return &Recipe{
-		id:       id,
-		name:     name,
-		settings: settings,
-		link:     link,
+func NewRecipe(id string, name string, settings RecipeSettings, link string) (*Recipe, error) {
+	nameObj, err := NewRecipeName(name)
+	if err != nil {
+		return nil, err
 	}
-}
-
-func CreateRecipe(id string, name string, settings RecipeSettings, link string) (*Recipe, error) {
 	return &Recipe{
 		id:       id,
-		name:     name,
+		name:     nameObj,
 		settings: settings,
 		link:     link,
 	}, nil
 }
 
-func RecipeFromPrimitives(rp RecipePrimitives) Recipe {
-	return Recipe{
-		name:     rp.Name,
-		settings: RecipeSettingsFromPrimitives(rp.Settings),
-		link:     rp.Link,
-	}
+func CreateRecipe(id string, name string, settings RecipeSettings, link string) (*Recipe, error) {
+	return NewRecipe(id, name, settings, link)
+}
+
+func RecipeFromPrimitives(rp RecipePrimitives) (*Recipe, error) {
+	settings := RecipeSettingsFromPrimitives(rp.Settings)
+
+	return NewRecipe(rp.ID, rp.Name, settings, rp.Link)
 }
 
 func (r Recipe) ID() string {
@@ -45,13 +65,13 @@ func (r Recipe) ID() string {
 }
 
 func (r Recipe) Name() string {
-	return r.name
+	return r.name.Value()
 }
 
 func (r Recipe) ToPrimitives() RecipePrimitives {
 	return RecipePrimitives{
 		ID:       r.id,
-		Name:     r.name,
+		Name:     r.name.value,
 		Settings: r.settings.ToPrimitives(),
 		Link:     r.link,
 	}
