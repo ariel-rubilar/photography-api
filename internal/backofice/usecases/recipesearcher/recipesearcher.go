@@ -3,7 +3,7 @@ package recipesearcher
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api/internal/backofice/domain/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backofice/recipe"
 )
 
 type Searcher struct {

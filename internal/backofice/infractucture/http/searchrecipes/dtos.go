@@ -1,7 +1,7 @@
 package searchrecipes
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/backofice/domain/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backofice/recipe"
 )
 
 type settingDTO struct {
