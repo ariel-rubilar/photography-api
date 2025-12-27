@@ -33,8 +33,6 @@ func (s *Saver) Save(ctx context.Context, new *recipe.Recipe) error {
 		return err
 	}
 
-	fmt.Println("Found recipes:", len(recipes))
-
 	if len(recipes) > 0 {
 		return fmt.Errorf("recipe with id %s already exists", new.ID())
 	}
