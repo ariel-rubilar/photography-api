@@ -3,13 +3,15 @@ package bootstrap
 import (
 	"context"
 
+	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/reciperepository"
+	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/env"
 	"github.com/ariel-rubilar/photography-api/internal/mongo"
 	"github.com/ariel-rubilar/photography-api/internal/server"
-	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
+	webphotorepository "github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
 
@@ -35,9 +37,11 @@ func Run() error {
 		return err
 	}
 
+	webPhotoRepository := webphotorepository.NewMongoRepository(mongoClient)
+
 	photoRepository := photorepository.NewMongoRepository(mongoClient)
 
-	photoSearcherUseCase := searcher.New(photoRepository)
+	photoSearcherUseCase := searcher.New(webPhotoRepository)
 
 	recipeRepository := reciperepository.NewMongoRepository(mongoClient)
 
@@ -45,10 +49,13 @@ func Run() error {
 
 	recipeSaverUseCase := recipesaver.New(recipeRepository)
 
+	photoSaverUseCase := photosaver.New(photoRepository)
+
 	providers := &server.Providers{
 		PhotoSearcher:  photoSearcherUseCase,
 		RecipeSearcher: recipeSearcherUseCase,
 		RecipeSaver:    recipeSaverUseCase,
+		PhotoSaver:     photoSaverUseCase,
 	}
 
 	s := server.New(providers)
