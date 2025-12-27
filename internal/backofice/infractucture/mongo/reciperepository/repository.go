@@ -51,3 +51,20 @@ func (r *repository) Search(ctx context.Context) ([]*recipe.Recipe, error) {
 
 	return recipes, nil
 }
+
+func (r *repository) Save(ctx context.Context, rec *recipe.Recipe) error {
+
+	document, err := DocumentFromDomain(rec)
+
+	if err != nil {
+		return fmt.Errorf("failed to convert recipe to document: %w", err)
+	}
+
+	_, err = r.client.Database(r.database).Collection(r.collection).InsertOne(ctx, document)
+
+	if err != nil {
+		return fmt.Errorf("failed to insert document: %w", err)
+	}
+
+	return nil
+}

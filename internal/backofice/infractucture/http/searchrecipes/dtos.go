@@ -22,6 +22,7 @@ type settingDTO struct {
 }
 
 type recipeDTO struct {
+	ID       string     `json:"id"`
 	Name     string     `json:"name"`
 	Settings settingDTO `json:"settings"`
 	Link     string     `json:"link"`
@@ -40,6 +41,8 @@ func newSearchRecipesResponse(recipes []*recipe.Recipe) searchPhotosResponse {
 		primitives := recipe.ToPrimitives()
 
 		recipeDTOs = append(recipeDTOs, recipeDTO{
+			ID:   primitives.ID,
+			Link: primitives.Link,
 			Name: primitives.Name,
 			Settings: settingDTO{
 				FilmSimulation:       primitives.Settings.FilmSimulation,

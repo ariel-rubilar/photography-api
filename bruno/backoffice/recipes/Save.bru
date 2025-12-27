@@ -1,0 +1,44 @@
+meta {
+  name: Save
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/backoffice/api/v1/recipes
+  body: json
+  auth: inherit
+}
+
+body:json {
+   {
+       "id":"694f1a1fbe2856a03c86d2ff", 
+       "name": "TEST FOR WEB",
+        "settings": {
+          "filmSimulation": "filmSimulation",
+          "dynamicRange": "dynamicRange",
+          "highlight": "highlight",
+          "shadow": "shadow",
+          "color": "color",
+          "noiseReduction": "noiseReduction",
+          "sharpening": "sharpening",
+          "clarity": "clarity",
+          "grainEffect": "grainEffect",
+          "colorChromeEffect": "colorChromeEffect",
+          "colorChromeBlue": "colorChromeBlue",
+          "whiteBalance": "whiteBalance",
+          "iso": "iso",
+          "exposureCompensation": "exposureCompensation"
+        },
+        "link": ""
+      }
+}
+
+vars:pre-request {
+  env.baseUrl: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

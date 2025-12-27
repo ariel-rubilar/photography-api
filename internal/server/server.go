@@ -1,7 +1,9 @@
 package server
 
 import (
+	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/http/saverecipe"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/http/searchrecipes"
+	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/http/searchphotos"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
@@ -11,6 +13,7 @@ import (
 type Providers struct {
 	PhotoSearcher  *searcher.Searcher
 	RecipeSearcher *recipesearcher.Searcher
+	RecipeSaver    *recipesaver.Saver
 }
 
 type server struct {
@@ -34,6 +37,7 @@ func (s *server) Start() error {
 	backofficeApiGroup := backofficeGroup.Group("/api/v1")
 
 	backofficeApiGroup.GET("/recipes", searchrecipes.NewHandler(s.providers.RecipeSearcher))
+	backofficeApiGroup.POST("/recipes", saverecipe.NewHandler(s.providers.RecipeSaver))
 
 	webGroup := s.engine.Group("/web")
 

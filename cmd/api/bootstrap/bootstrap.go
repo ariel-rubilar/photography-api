@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/reciperepository"
+	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/env"
 	"github.com/ariel-rubilar/photography-api/internal/mongo"
@@ -42,9 +43,12 @@ func Run() error {
 
 	recipeSearcherUseCase := recipesearcher.New(recipeRepository)
 
+	recipeSaverUseCase := recipesaver.New(recipeRepository)
+
 	providers := &server.Providers{
 		PhotoSearcher:  photoSearcherUseCase,
 		RecipeSearcher: recipeSearcherUseCase,
+		RecipeSaver:    recipeSaverUseCase,
 	}
 
 	s := server.New(providers)

@@ -29,6 +29,35 @@ type recipeDocument struct {
 	Link     string        `bson:"link"`
 }
 
+func DocumentFromDomain(r *recipe.Recipe) (recipeDocument, error) {
+	primitives := r.ToPrimitives()
+	id, err := bson.ObjectIDFromHex(primitives.ID)
+	if err != nil {
+		return recipeDocument{}, err
+	}
+	return recipeDocument{
+		ID:   id,
+		Name: primitives.Name,
+		Settings: settings{
+			FilmSimulation:       primitives.Settings.FilmSimulation,
+			DynamicRange:         primitives.Settings.DynamicRange,
+			Highlight:            primitives.Settings.Highlight,
+			Shadow:               primitives.Settings.Shadow,
+			Color:                primitives.Settings.Color,
+			NoiseReduction:       primitives.Settings.NoiseReduction,
+			Sharpening:           primitives.Settings.Sharpening,
+			Clarity:              primitives.Settings.Clarity,
+			GrainEffect:          primitives.Settings.GrainEffect,
+			ColorChromeEffect:    primitives.Settings.ColorChromeEffect,
+			ColorChromeBlue:      primitives.Settings.ColorChromeBlue,
+			WhiteBalance:         primitives.Settings.WhiteBalance,
+			Iso:                  primitives.Settings.Iso,
+			ExposureCompensation: primitives.Settings.ExposureCompensation,
+		},
+		Link: primitives.Link,
+	}, nil
+}
+
 func (p recipeDocument) toDomain() *recipe.Recipe {
 
 	settings := recipe.NewRecipeSettings(
