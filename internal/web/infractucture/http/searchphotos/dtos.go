@@ -1,8 +1,6 @@
 package searchphotos
 
-import (
-	"github.com/ariel-rubilar/photography-api/internal/web/domain"
-)
+import "github.com/ariel-rubilar/photography-api/internal/web/photo"
 
 type photoRecipeSettings struct {
 	FilmSimulation       string `json:"filmSimulation"`
@@ -38,7 +36,7 @@ type searchPhotosResponse struct {
 	Data []photoDTO `json:"data"`
 }
 
-func NewSearchPhotosResponse(photos []*domain.Photo) searchPhotosResponse {
+func NewSearchPhotosResponse(photos []*photo.Photo) searchPhotosResponse {
 
 	var photoDTOs []photoDTO
 

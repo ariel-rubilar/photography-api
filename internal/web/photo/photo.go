@@ -1,4 +1,4 @@
-package domain
+package photo
 
 type PhotoPrimitives struct {
 	ID     string

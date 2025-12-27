@@ -1,7 +1,7 @@
 package photorepository
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/web/domain"
+	"github.com/ariel-rubilar/photography-api/internal/web/photo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -35,9 +35,9 @@ type photoDocument struct {
 	Recipe photoRecipe   `bson:"recipe"`
 }
 
-func (p photoDocument) toDomain() *domain.Photo {
+func (p photoDocument) toDomain() *photo.Photo {
 
-	settings := domain.NewRecipeSettings(
+	settings := photo.NewRecipeSettings(
 		p.Recipe.Settings.FilmSimulation,
 		p.Recipe.Settings.DynamicRange,
 		p.Recipe.Settings.Highlight,
@@ -54,13 +54,13 @@ func (p photoDocument) toDomain() *domain.Photo {
 		p.Recipe.Settings.ExposureCompensation,
 	)
 
-	recipe := domain.NewRecipe(
+	recipe := photo.NewRecipe(
 		p.Recipe.Name,
 		settings,
 		p.Recipe.Link,
 	)
 
-	return domain.NewPhoto(
+	return photo.NewPhoto(
 		p.ID.Hex(),
 		p.Title,
 		p.URL,
