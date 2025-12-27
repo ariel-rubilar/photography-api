@@ -18,7 +18,7 @@ func Run() error {
 
 	cfg, err := env.LoadConfig()
 
-	mongoClient, err := mongo.NewMongoClient(cfg.MongoURI)
+	mongoClient, err := mongo.NewClient(cfg.MongoURI)
 
 	if err != nil {
 		return err

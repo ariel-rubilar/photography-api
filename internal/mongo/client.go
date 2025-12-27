@@ -5,7 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func NewMongoClient(uri string) (*mongo.Client, error) {
+func NewClient(uri string) (*mongo.Client, error) {
 	client, err := mongo.Connect(
 		options.Client().ApplyURI(uri),
 	)
