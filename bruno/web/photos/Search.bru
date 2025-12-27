@@ -1,0 +1,20 @@
+meta {
+  name: Search
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/web/api/v1/photos
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  env.baseUrl:
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
