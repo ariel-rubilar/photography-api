@@ -12,6 +12,7 @@ func NewSearchPhotosHandler(searcher *searcher.Searcher) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		photos, err := searcher.Search(c.Request.Context())
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": fmt.Sprintf("failed to search photos: %v", err),

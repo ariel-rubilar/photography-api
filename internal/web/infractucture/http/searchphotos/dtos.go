@@ -1,30 +1,79 @@
 package searchphotos
 
-import "github.com/ariel-rubilar/photography-api~/internal/web/domain"
+import (
+	"github.com/ariel-rubilar/photography-api~/internal/web/domain"
+)
 
-type PhotoDTO struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
-	URL   string `json:"url"`
+type photoRecipeSettings struct {
+	FilmSimulation       string `json:"filmSimulation"`
+	DynamicRange         string `json:"dynamicRange"`
+	Highlight            string `json:"highlight"`
+	Shadow               string `json:"shadow"`
+	Color                string `json:"color"`
+	NoiseReduction       string `json:"noiseReduction"`
+	Sharpening           string `json:"sharpening"`
+	Clarity              string `json:"clarity"`
+	GrainEffect          string `json:"grainEffect"`
+	ColorChromeEffect    string `json:"colorChromeEffect"`
+	ColorChromeBlue      string `json:"colorChromeBlue"`
+	WhiteBalance         string `json:"whiteBalance"`
+	Iso                  string `json:"iso"`
+	ExposureCompensation string `json:"exposureCompensation"`
 }
 
-type SearchPhotosResponse struct {
-	Data []PhotoDTO `json:"data"`
+type photoRecipe struct {
+	Name     string              `json:"name"`
+	Settings photoRecipeSettings `json:"settings"`
+	Link     string              `json:"link"`
 }
 
-func NewSearchPhotosResponse(photos []*domain.Photo) *SearchPhotosResponse {
+type photoDTO struct {
+	ID     string      `json:"id"`
+	Title  string      `json:"title"`
+	URL    string      `json:"url"`
+	Recipe photoRecipe `json:"recipe"`
+}
 
-	var photoDTOs []PhotoDTO
+type searchPhotosResponse struct {
+	Data []photoDTO `json:"data"`
+}
+
+func NewSearchPhotosResponse(photos []*domain.Photo) *searchPhotosResponse {
+
+	var photoDTOs []photoDTO
 
 	for _, photo := range photos {
-		photoDTOs = append(photoDTOs, PhotoDTO{
-			ID:    photo.ID,
-			Title: photo.Title,
-			URL:   photo.URL,
+
+		primitives := photo.ToPrimitives()
+
+		photoDTOs = append(photoDTOs, photoDTO{
+			ID:    primitives.ID,
+			Title: primitives.Title,
+			URL:   primitives.URL,
+			Recipe: photoRecipe{
+				Name: primitives.Recipe.Name,
+				Settings: photoRecipeSettings{
+					FilmSimulation:       primitives.Recipe.Settings.FilmSimulation,
+					DynamicRange:         primitives.Recipe.Settings.DynamicRange,
+					Highlight:            primitives.Recipe.Settings.Highlight,
+					Shadow:               primitives.Recipe.Settings.Shadow,
+					Color:                primitives.Recipe.Settings.Color,
+					NoiseReduction:       primitives.Recipe.Settings.NoiseReduction,
+					Sharpening:           primitives.Recipe.Settings.Sharpening,
+					Clarity:              primitives.Recipe.Settings.Clarity,
+					GrainEffect:          primitives.Recipe.Settings.GrainEffect,
+					ColorChromeEffect:    primitives.Recipe.Settings.ColorChromeEffect,
+					ColorChromeBlue:      primitives.Recipe.Settings.ColorChromeBlue,
+					WhiteBalance:         primitives.Recipe.Settings.WhiteBalance,
+					Iso:                  primitives.Recipe.Settings.Iso,
+					ExposureCompensation: primitives.Recipe.Settings.ExposureCompensation,
+				},
+				Link: primitives.Recipe.Link,
+			},
 		})
 	}
 
-	return &SearchPhotosResponse{
+	return &searchPhotosResponse{
 		Data: photoDTOs,
 	}
 }
