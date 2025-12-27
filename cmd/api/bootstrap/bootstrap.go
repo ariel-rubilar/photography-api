@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ariel-rubilar/photography-api~/internal/server"
-	"github.com/ariel-rubilar/photography-api~/internal/web/infractucture/mongo"
-	"github.com/ariel-rubilar/photography-api~/internal/web/infractucture/mongo/photorepository"
-	"github.com/ariel-rubilar/photography-api~/internal/web/usecases/searcher"
+	"github.com/ariel-rubilar/photography-api/internal/server"
+	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo"
+	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"github.com/joho/godotenv"
 )
 

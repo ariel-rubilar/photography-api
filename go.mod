@@ -1,4 +1,4 @@
-module github.com/ariel-rubilar/photography-api~
+module github.com/ariel-rubilar/photography-api
 
 go 1.25.5
 

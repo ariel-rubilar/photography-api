@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/ariel-rubilar/photography-api~/internal/web/infractucture/http/searchphotos"
-	"github.com/ariel-rubilar/photography-api~/internal/web/usecases/searcher"
+	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/http/searchphotos"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"github.com/gin-gonic/gin"
 )
 

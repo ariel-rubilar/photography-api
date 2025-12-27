@@ -3,7 +3,7 @@ package searcher
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api~/internal/web/domain"
+	"github.com/ariel-rubilar/photography-api/internal/web/domain"
 )
 
 type Searcher struct {

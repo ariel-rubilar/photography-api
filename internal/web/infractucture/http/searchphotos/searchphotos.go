@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ariel-rubilar/photography-api~/internal/web/usecases/searcher"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"github.com/gin-gonic/gin"
 )
 

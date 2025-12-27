@@ -1,7 +1,7 @@
 package searchphotos
 
 import (
-	"github.com/ariel-rubilar/photography-api~/internal/web/domain"
+	"github.com/ariel-rubilar/photography-api/internal/web/domain"
 )
 
 type photoRecipeSettings struct {
@@ -38,7 +38,7 @@ type searchPhotosResponse struct {
 	Data []photoDTO `json:"data"`
 }
 
-func NewSearchPhotosResponse(photos []*domain.Photo) *searchPhotosResponse {
+func NewSearchPhotosResponse(photos []*domain.Photo) searchPhotosResponse {
 
 	var photoDTOs []photoDTO
 
@@ -73,7 +73,7 @@ func NewSearchPhotosResponse(photos []*domain.Photo) *searchPhotosResponse {
 		})
 	}
 
-	return &searchPhotosResponse{
+	return searchPhotosResponse{
 		Data: photoDTOs,
 	}
 }

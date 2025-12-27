@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ariel-rubilar/photography-api~/internal/web/domain"
+	"github.com/ariel-rubilar/photography-api/internal/web/domain"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
