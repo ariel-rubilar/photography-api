@@ -1,5 +1,7 @@
 package reciperead
 
+import "context"
+
 type Repository interface {
-	Get(id string) (*RecipeRead, error)
+	Get(ctx context.Context, id string) (*RecipeRead, error)
 }

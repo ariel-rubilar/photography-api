@@ -36,12 +36,12 @@ func (p *PhotoViewProjector) Handle(ctx context.Context, event event.Event) erro
 		return fmt.Errorf("invalid event type: %s", event.Type())
 	}
 
-	photo, err := p.photoReader.Get(e.PhotoID())
+	photo, err := p.photoReader.Get(ctx, e.PhotoID())
 	if err != nil {
 		return err
 	}
 
-	recipe, err := p.recipeReader.Get(e.RecipeID())
+	recipe, err := p.recipeReader.Get(ctx, e.RecipeID())
 	if err != nil {
 		return err
 	}

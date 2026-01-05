@@ -1,5 +1,7 @@
 package photoread
 
+import "context"
+
 type Repository interface {
-	Get(id string) (*PhotoRead, error)
+	Get(ctx context.Context, id string) (*PhotoRead, error)
 }
