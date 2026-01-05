@@ -3,7 +3,7 @@ package photosaver
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 )
 

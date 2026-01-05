@@ -1,7 +1,7 @@
 package reciperepository
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/backofice/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 

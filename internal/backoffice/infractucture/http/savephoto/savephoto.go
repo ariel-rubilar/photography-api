@@ -1,17 +1,17 @@
-package saverecipe
+package savephoto
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/gin-gonic/gin"
 )
 
-func NewHandler(searcher *recipesaver.Saver) gin.HandlerFunc {
+func NewHandler(searcher photosaver.Saver) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		var request recipeDTO
+		var request photoDTO
 
 		if err := c.ShouldBind(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -20,16 +20,7 @@ func NewHandler(searcher *recipesaver.Saver) gin.HandlerFunc {
 			return
 		}
 
-		recipe, err := request.toDomain()
-
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": fmt.Sprintf("invalid recipe data: %v", err),
-			})
-			return
-		}
-
-		err = searcher.Save(c.Request.Context(), recipe)
+		err := searcher.Save(c.Request.Context(), request.ID, request.Title, request.URL, request.RecipeID)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{

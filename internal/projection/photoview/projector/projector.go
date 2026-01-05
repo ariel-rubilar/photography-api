@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/domain/photoread"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/domain/photoview"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/domain/reciperead"

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ariel-rubilar/photography-api/internal/backofice/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
 )
 
 type Saver struct {

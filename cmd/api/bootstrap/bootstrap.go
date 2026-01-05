@@ -3,12 +3,12 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/photorepository"
-	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/reciperepository"
-	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
-	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/photosaver"
-	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
-	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesearcher"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/mongo/photorepository"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/mongo/reciperepository"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/env"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/photoreadrepository"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/photoviewdrepository"
