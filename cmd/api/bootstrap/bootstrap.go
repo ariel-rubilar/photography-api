@@ -3,22 +3,22 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/mongo/photorepository"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/mongo/reciperepository"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/mongo/photorepository"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/mongo/reciperepository"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/env"
-	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/photoreadrepository"
-	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/photoviewdrepository"
-	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/recipereadrepository"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infrastructure/mongo/photoreadrepository"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infrastructure/mongo/photoviewdrepository"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infrastructure/mongo/recipereadrepository"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/projector"
 
 	"github.com/ariel-rubilar/photography-api/internal/server"
-	"github.com/ariel-rubilar/photography-api/internal/shared/infractucture/imbus"
-	"github.com/ariel-rubilar/photography-api/internal/shared/infractucture/mongo"
-	webphotorepository "github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/imbus"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/mongo"
+	webphotorepository "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
 

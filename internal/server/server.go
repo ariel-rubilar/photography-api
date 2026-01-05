@@ -1,13 +1,13 @@
 package server
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/http/savephoto"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/http/saverecipe"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infractucture/http/searchrecipes"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/savephoto"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/saverecipe"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/searchrecipes"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
-	"github.com/ariel-rubilar/photography-api/internal/web/infractucture/http/searchphotos"
+	"github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http/searchphotos"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"github.com/gin-gonic/gin"
 )
