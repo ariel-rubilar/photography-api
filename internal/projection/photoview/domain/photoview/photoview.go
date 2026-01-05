@@ -74,7 +74,7 @@ type PhotoView struct {
 	Recipe Recipe
 }
 
-func BuildPhotoView(id, title, url string, recipe Recipe) *PhotoView {
+func Build(id, title, url string, recipe Recipe) *PhotoView {
 	return &PhotoView{
 		ID:     id,
 		Title:  title,

@@ -70,7 +70,7 @@ func (p *PhotoViewProjector) Handle(ctx context.Context, event event.Event) erro
 		recipe.Link,
 	)
 
-	view := photoview.BuildPhotoView(
+	view := photoview.Build(
 		photo.ID,
 		photo.Title,
 		photo.Url,
