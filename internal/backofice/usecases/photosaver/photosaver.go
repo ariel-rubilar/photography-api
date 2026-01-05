@@ -4,13 +4,15 @@ import (
 	"context"
 
 	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
+	"github.com/ariel-rubilar/photography-api/internal/event"
 )
 
 type Saver struct {
 	repo photo.Repository
+	bus  event.Bus
 }
 
-func New(repo photo.Repository) *Saver {
+func New(repo photo.Repository, bus event.Bus) *Saver {
 	return &Saver{
 		repo: repo,
 	}
@@ -23,5 +25,10 @@ func (s *Saver) Save(ctx context.Context, id, title, url, recipeID string) error
 		return err
 	}
 
-	return s.repo.Save(ctx, newPhoto)
+	err = s.repo.Save(ctx, newPhoto)
+	if err != nil {
+		return err
+	}
+
+	return s.bus.Publish(ctx, newPhoto.PullEvents())
 }

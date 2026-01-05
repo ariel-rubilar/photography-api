@@ -1,5 +1,7 @@
 package photo
 
+import "github.com/ariel-rubilar/photography-api/internal/event"
+
 type PhotoPrimitives struct {
 	ID       string
 	Title    string
@@ -12,7 +14,7 @@ type Photo struct {
 	title    string
 	url      PhotoUrl
 	recipeID string
-	events   []any
+	events   []event.Event
 }
 
 func new(id, title, recipeID string, url PhotoUrl) *Photo {
@@ -80,12 +82,12 @@ func (p *Photo) ToPrimitives() PhotoPrimitives {
 	}
 }
 
-func (p *Photo) PullEvents() []any {
+func (p *Photo) PullEvents() []event.Event {
 	events := p.events
-	p.events = []any{}
+	p.events = []event.Event{}
 	return events
 }
 
-func (p *Photo) recordEvent(event any) {
+func (p *Photo) recordEvent(event event.Event) {
 	p.events = append(p.events, event)
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/env"
 	"github.com/ariel-rubilar/photography-api/internal/mongo"
 	"github.com/ariel-rubilar/photography-api/internal/server"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infractucture/imbus"
 	webphotorepository "github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
@@ -37,6 +38,8 @@ func Run() error {
 		return err
 	}
 
+	bus := imbus.New()
+
 	webPhotoRepository := webphotorepository.NewMongoRepository(mongoClient)
 
 	photoRepository := photorepository.NewMongoRepository(mongoClient)
@@ -49,7 +52,7 @@ func Run() error {
 
 	recipeSaverUseCase := recipesaver.New(recipeRepository)
 
-	photoSaverUseCase := photosaver.New(photoRepository)
+	photoSaverUseCase := photosaver.New(photoRepository, bus)
 
 	providers := &server.Providers{
 		PhotoSearcher:  photoSearcherUseCase,
