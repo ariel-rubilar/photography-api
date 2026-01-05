@@ -1,0 +1,29 @@
+meta {
+  name: Save
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/backoffice/api/v1/photos
+  body: json
+  auth: inherit
+}
+
+body:json {
+   {
+       "id":"694f1a1fbe2856a03c86d2ff", 
+       "title": "PHOTO 1",
+       "url": "https://pub-9515b2f935aa4386a5b8b28e27aa60ec.r2.dev/2025/12/_DSF7008.JPG",
+       "recipeId": "694f1a15be2856a03c86d2fd"
+      }
+}
+
+vars:pre-request {
+  env.baseUrl: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
