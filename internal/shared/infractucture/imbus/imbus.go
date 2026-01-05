@@ -3,7 +3,7 @@ package imbus
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api/internal/event"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 )
 
 var _ event.Bus = &bus{}

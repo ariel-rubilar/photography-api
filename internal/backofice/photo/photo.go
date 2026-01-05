@@ -1,6 +1,6 @@
 package photo
 
-import "github.com/ariel-rubilar/photography-api/internal/event"
+import "github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 
 type PhotoPrimitives struct {
 	ID       string

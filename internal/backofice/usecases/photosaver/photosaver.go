@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
-	"github.com/ariel-rubilar/photography-api/internal/event"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 )
 
 type Saver struct {
