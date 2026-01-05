@@ -9,9 +9,10 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/env"
-	"github.com/ariel-rubilar/photography-api/internal/mongo"
+
 	"github.com/ariel-rubilar/photography-api/internal/server"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infractucture/imbus"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infractucture/mongo"
 	webphotorepository "github.com/ariel-rubilar/photography-api/internal/web/infractucture/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
