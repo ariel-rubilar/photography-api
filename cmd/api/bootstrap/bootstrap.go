@@ -5,10 +5,15 @@ import (
 
 	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/infractucture/mongo/reciperepository"
+	"github.com/ariel-rubilar/photography-api/internal/backofice/photo"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backofice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/env"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/photoreadrepository"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/photoviewdrepository"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infractucture/mongo/recipereadrepository"
+	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/projector"
 
 	"github.com/ariel-rubilar/photography-api/internal/server"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infractucture/imbus"
@@ -40,6 +45,16 @@ func Run() error {
 	}
 
 	bus := imbus.New()
+
+	photoReadRepository := photoreadrepository.NewMongoRepository(mongoClient)
+
+	recipeReadRepository := recipereadrepository.NewMongoRepository(mongoClient)
+
+	photoViewRepository := photoviewdrepository.NewMongoRepository(mongoClient)
+
+	photoViewProjector := projector.New(photoReadRepository, recipeReadRepository, photoViewRepository)
+
+	bus.Subscribe(photo.PhotoCreatedEventType, photoViewProjector)
 
 	webPhotoRepository := webphotorepository.NewMongoRepository(mongoClient)
 
