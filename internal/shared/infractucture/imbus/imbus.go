@@ -13,7 +13,9 @@ type bus struct {
 }
 
 func New() *bus {
-	return &bus{}
+	return &bus{
+		handlers: make(map[event.Type][]event.Handler),
+	}
 }
 
 func (b *bus) Publish(ctx context.Context, events []event.Event) error {

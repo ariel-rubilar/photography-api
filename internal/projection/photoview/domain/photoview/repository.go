@@ -1,5 +1,7 @@
 package photoview
 
+import "context"
+
 type Repository interface {
-	Save(view *PhotoView) error
+	Save(ctx context.Context, view *PhotoView) error
 }

@@ -1,6 +1,8 @@
 package photoviewdrepository
 
 import (
+	"context"
+
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/domain/photoview"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -25,8 +27,18 @@ func (r *repository) getCollection() *mongo.Collection {
 	return r.client.Database(r.database).Collection(r.collection)
 }
 
-func (r *repository) Save(photoview *photoview.PhotoView) error {
-	// Implementation goes here
+func (r *repository) Save(ctx context.Context, photoview *photoview.PhotoView) error {
+
+	doc, err := DocumentFromDomain(photoview)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.getCollection().InsertOne(ctx, doc)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

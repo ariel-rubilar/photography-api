@@ -15,6 +15,7 @@ type Saver struct {
 func New(repo photo.Repository, bus event.Bus) *Saver {
 	return &Saver{
 		repo: repo,
+		bus:  bus,
 	}
 }
 

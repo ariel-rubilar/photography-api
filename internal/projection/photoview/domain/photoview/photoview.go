@@ -1,20 +1,20 @@
 package photoview
 
 type RecipeSettings struct {
-	filmSimulation       string
-	dynamicRange         string
-	highlight            string
-	shadow               string
-	color                string
-	noiseReduction       string
-	sharpening           string
-	clarity              string
-	grainEffect          string
-	colorChromeEffect    string
-	colorChromeBlue      string
-	whiteBalance         string
-	iso                  string
-	exposureCompensation string
+	FilmSimulation       string
+	DynamicRange         string
+	Highlight            string
+	Shadow               string
+	Color                string
+	NoiseReduction       string
+	Sharpening           string
+	Clarity              string
+	GrainEffect          string
+	ColorChromeEffect    string
+	ColorChromeBlue      string
+	WhiteBalance         string
+	Iso                  string
+	ExposureCompensation string
 }
 
 func BuildRecipeSettings(
@@ -34,51 +34,51 @@ func BuildRecipeSettings(
 	exposureCompensation string,
 ) RecipeSettings {
 	return RecipeSettings{
-		filmSimulation:       filmSimulation,
-		dynamicRange:         dynamicRange,
-		highlight:            highlight,
-		shadow:               shadow,
-		color:                color,
-		noiseReduction:       noiseReduction,
-		sharpening:           sharpening,
-		clarity:              clarity,
-		grainEffect:          grainEffect,
-		colorChromeEffect:    colorChromeEffect,
-		colorChromeBlue:      colorChromeBlue,
-		whiteBalance:         whiteBalance,
-		iso:                  iso,
-		exposureCompensation: exposureCompensation,
+		FilmSimulation:       filmSimulation,
+		DynamicRange:         dynamicRange,
+		Highlight:            highlight,
+		Shadow:               shadow,
+		Color:                color,
+		NoiseReduction:       noiseReduction,
+		Sharpening:           sharpening,
+		Clarity:              clarity,
+		GrainEffect:          grainEffect,
+		ColorChromeEffect:    colorChromeEffect,
+		ColorChromeBlue:      colorChromeBlue,
+		WhiteBalance:         whiteBalance,
+		Iso:                  iso,
+		ExposureCompensation: exposureCompensation,
 	}
 }
 
 type Recipe struct {
-	id       string
-	name     string
-	settings RecipeSettings
-	link     string
+	ID       string
+	Name     string
+	Settings RecipeSettings
+	Link     string
 }
 
 func BuildRecipe(id, name string, settings RecipeSettings, link string) Recipe {
 	return Recipe{
-		id:       id,
-		name:     name,
-		settings: settings,
-		link:     link,
+		ID:       id,
+		Name:     name,
+		Settings: settings,
+		Link:     link,
 	}
 }
 
 type PhotoView struct {
-	id     string
-	title  string
-	url    string
-	recipe Recipe
+	ID     string
+	Title  string
+	Url    string
+	Recipe Recipe
 }
 
 func BuildPhotoView(id, title, url string, recipe Recipe) *PhotoView {
 	return &PhotoView{
-		id:     id,
-		title:  title,
-		url:    url,
-		recipe: recipe,
+		ID:     id,
+		Title:  title,
+		Url:    url,
+		Recipe: recipe,
 	}
 }

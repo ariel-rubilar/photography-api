@@ -6,10 +6,10 @@ import (
 )
 
 type photoDocument struct {
-	ID       string `bson:"_id,omitempty"`
-	Title    string `bson:"title"`
-	URL      string `bson:"url"`
-	RecipeID string `bson:"recipeId"`
+	ID       bson.ObjectID `bson:"_id,omitempty"`
+	Title    string        `bson:"title"`
+	URL      string        `bson:"url"`
+	RecipeID string        `bson:"recipeId"`
 }
 
 func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {
@@ -19,7 +19,7 @@ func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {
 		return photoDocument{}, err
 	}
 	return photoDocument{
-		ID:       id.Hex(),
+		ID:       id,
 		Title:    primitives.Title,
 		URL:      primitives.URL,
 		RecipeID: id.Hex(),

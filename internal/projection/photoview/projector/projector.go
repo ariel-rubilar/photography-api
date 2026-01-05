@@ -77,5 +77,5 @@ func (p *PhotoViewProjector) Handle(ctx context.Context, event event.Event) erro
 		r,
 	)
 
-	return p.viewRepo.Save(view)
+	return p.viewRepo.Save(ctx, view)
 }
