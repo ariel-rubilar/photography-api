@@ -12,7 +12,7 @@ type Recipe struct {
 	link     string
 }
 
-func NewRecipe(name string, settings RecipeSettings, link string) Recipe {
+func newRecipe(name string, settings RecipeSettings, link string) Recipe {
 	return Recipe{
 		name:     name,
 		settings: settings,
@@ -21,11 +21,7 @@ func NewRecipe(name string, settings RecipeSettings, link string) Recipe {
 }
 
 func RecipeFromPrimitives(rp RecipePrimitives) Recipe {
-	return Recipe{
-		name:     rp.Name,
-		settings: RecipeSettingsFromPrimitives(rp.Settings),
-		link:     rp.Link,
-	}
+	return newRecipe(rp.Name, RecipeSettingsFromPrimitives(rp.Settings), rp.Link)
 }
 
 func (r Recipe) ToPrimitives() RecipePrimitives {

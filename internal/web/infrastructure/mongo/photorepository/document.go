@@ -37,33 +37,31 @@ type photoDocument struct {
 
 func (p photoDocument) toDomain() *photo.Photo {
 
-	settings := photo.NewRecipeSettings(
-		p.Recipe.Settings.FilmSimulation,
-		p.Recipe.Settings.DynamicRange,
-		p.Recipe.Settings.Highlight,
-		p.Recipe.Settings.Shadow,
-		p.Recipe.Settings.Color,
-		p.Recipe.Settings.NoiseReduction,
-		p.Recipe.Settings.Sharpening,
-		p.Recipe.Settings.Clarity,
-		p.Recipe.Settings.GrainEffect,
-		p.Recipe.Settings.ColorChromeEffect,
-		p.Recipe.Settings.ColorChromeBlue,
-		p.Recipe.Settings.WhiteBalance,
-		p.Recipe.Settings.Iso,
-		p.Recipe.Settings.ExposureCompensation,
-	)
-
-	recipe := photo.NewRecipe(
-		p.Recipe.Name,
-		settings,
-		p.Recipe.Link,
-	)
-
-	return photo.NewPhoto(
-		p.ID.Hex(),
-		p.Title,
-		p.URL,
-		recipe,
+	return photo.FromPrimitives(
+		photo.PhotoPrimitives{
+			ID:    p.ID.Hex(),
+			Title: p.Title,
+			URL:   p.URL,
+			Recipe: photo.RecipePrimitives{
+				Name: p.Recipe.Name,
+				Settings: photo.RecipeSettingsPrimitives{
+					FilmSimulation:       p.Recipe.Settings.FilmSimulation,
+					DynamicRange:         p.Recipe.Settings.DynamicRange,
+					Highlight:            p.Recipe.Settings.Highlight,
+					Shadow:               p.Recipe.Settings.Shadow,
+					Color:                p.Recipe.Settings.Color,
+					NoiseReduction:       p.Recipe.Settings.NoiseReduction,
+					Sharpening:           p.Recipe.Settings.Sharpening,
+					Clarity:              p.Recipe.Settings.Clarity,
+					GrainEffect:          p.Recipe.Settings.GrainEffect,
+					ColorChromeEffect:    p.Recipe.Settings.ColorChromeEffect,
+					ColorChromeBlue:      p.Recipe.Settings.ColorChromeBlue,
+					WhiteBalance:         p.Recipe.Settings.WhiteBalance,
+					Iso:                  p.Recipe.Settings.Iso,
+					ExposureCompensation: p.Recipe.Settings.ExposureCompensation,
+				},
+				Link: p.Recipe.Link,
+			},
+		},
 	)
 }

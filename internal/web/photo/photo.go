@@ -14,7 +14,7 @@ type Photo struct {
 	recipe Recipe
 }
 
-func NewPhoto(id, title, url string, recipe Recipe) *Photo {
+func new(id, title, url string, recipe Recipe) *Photo {
 	return &Photo{
 		id:     id,
 		title:  title,
@@ -23,13 +23,8 @@ func NewPhoto(id, title, url string, recipe Recipe) *Photo {
 	}
 }
 
-func PhotoFromPrimitives(pr PhotoPrimitives) *Photo {
-	return &Photo{
-		id:     pr.ID,
-		title:  pr.Title,
-		url:    pr.URL,
-		recipe: RecipeFromPrimitives(pr.Recipe),
-	}
+func FromPrimitives(pr PhotoPrimitives) *Photo {
+	return new(pr.ID, pr.Title, pr.URL, RecipeFromPrimitives(pr.Recipe))
 }
 
 func (p *Photo) ToPrimitives() PhotoPrimitives {

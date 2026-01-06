@@ -34,7 +34,7 @@ type RecipeSettings struct {
 	exposureCompensation string
 }
 
-func NewRecipeSettings(
+func newRecipeSettings(
 	filmSimulation,
 	dynamicRange,
 	highlight,
@@ -69,22 +69,22 @@ func NewRecipeSettings(
 }
 
 func RecipeSettingsFromPrimitives(rsp RecipeSettingsPrimitives) RecipeSettings {
-	return RecipeSettings{
-		filmSimulation:       rsp.FilmSimulation,
-		dynamicRange:         rsp.DynamicRange,
-		highlight:            rsp.Highlight,
-		shadow:               rsp.Shadow,
-		color:                rsp.Color,
-		noiseReduction:       rsp.NoiseReduction,
-		sharpening:           rsp.Sharpening,
-		clarity:              rsp.Clarity,
-		grainEffect:          rsp.GrainEffect,
-		colorChromeEffect:    rsp.ColorChromeEffect,
-		colorChromeBlue:      rsp.ColorChromeBlue,
-		whiteBalance:         rsp.WhiteBalance,
-		iso:                  rsp.Iso,
-		exposureCompensation: rsp.ExposureCompensation,
-	}
+	return newRecipeSettings(
+		rsp.FilmSimulation,
+		rsp.DynamicRange,
+		rsp.Highlight,
+		rsp.Shadow,
+		rsp.Color,
+		rsp.NoiseReduction,
+		rsp.Sharpening,
+		rsp.Clarity,
+		rsp.GrainEffect,
+		rsp.ColorChromeEffect,
+		rsp.ColorChromeBlue,
+		rsp.WhiteBalance,
+		rsp.Iso,
+		rsp.ExposureCompensation,
+	)
 }
 
 func (rs RecipeSettings) ToPrimitives() RecipeSettingsPrimitives {
