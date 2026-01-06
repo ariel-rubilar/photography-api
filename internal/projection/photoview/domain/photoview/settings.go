@@ -1,22 +1,6 @@
-package reciperead
+package photoview
 
-type RecipeRead struct {
-	ID       string
-	Name     string
-	Settings RecipeReadSettings
-	Link     string
-}
-
-func New(id string, name string, settings RecipeReadSettings, link string) *RecipeRead {
-	return &RecipeRead{
-		ID:       id,
-		Name:     name,
-		Settings: settings,
-		Link:     link,
-	}
-}
-
-type RecipeReadSettings struct {
+type RecipeSettings struct {
 	FilmSimulation       string
 	DynamicRange         string
 	Highlight            string
@@ -48,8 +32,8 @@ func NewRecipeSettings(
 	whiteBalance,
 	iso,
 	exposureCompensation string,
-) RecipeReadSettings {
-	return RecipeReadSettings{
+) RecipeSettings {
+	return RecipeSettings{
 		FilmSimulation:       filmSimulation,
 		DynamicRange:         dynamicRange,
 		Highlight:            highlight,

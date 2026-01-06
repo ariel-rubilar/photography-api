@@ -31,7 +31,7 @@ type recipeDocument struct {
 
 func (p recipeDocument) ToDomain() *reciperead.RecipeRead {
 
-	settings := reciperead.BuildRecipeSettings(
+	settings := reciperead.NewRecipeSettings(
 		p.Settings.FilmSimulation,
 		p.Settings.DynamicRange,
 		p.Settings.Highlight,
@@ -48,7 +48,7 @@ func (p recipeDocument) ToDomain() *reciperead.RecipeRead {
 		p.Settings.ExposureCompensation,
 	)
 
-	recipe := reciperead.BuildRecipe(
+	recipe := reciperead.New(
 		p.ID.Hex(),
 		p.Name,
 		settings,

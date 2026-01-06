@@ -36,7 +36,7 @@ func (s *saver) Save(ctx context.Context, photoID string, recipeID string) error
 		return err
 	}
 
-	settings := photoview.BuildRecipeSettings(
+	settings := photoview.NewRecipeSettings(
 		recipe.Settings.FilmSimulation,
 		recipe.Settings.DynamicRange,
 		recipe.Settings.Highlight,
@@ -53,14 +53,14 @@ func (s *saver) Save(ctx context.Context, photoID string, recipeID string) error
 		recipe.Settings.ExposureCompensation,
 	)
 
-	r := photoview.BuildRecipe(
+	r := photoview.NewRecipe(
 		recipe.ID,
 		recipe.Name,
 		settings,
 		recipe.Link,
 	)
 
-	view := photoview.Build(
+	view := photoview.New(
 		photo.ID,
 		photo.Title,
 		photo.Url,

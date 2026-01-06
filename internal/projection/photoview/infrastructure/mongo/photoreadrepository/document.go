@@ -13,7 +13,7 @@ type photoDocument struct {
 }
 
 func (p photoDocument) ToDomain() *photoread.PhotoRead {
-	return photoread.Build(
+	return photoread.New(
 		p.ID.Hex(),
 		p.Title,
 		p.URL,
