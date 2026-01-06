@@ -3,7 +3,7 @@ package photo
 import "github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 
 var (
-	PhotoCreatedEventType event.Type = "events.photo.created"
+	PhotoCreatedEventType event.Type = "backoffice.events.photo.created"
 )
 
 type PhotoCreatedEvent struct {
