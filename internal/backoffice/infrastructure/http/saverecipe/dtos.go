@@ -29,24 +29,26 @@ type recipeDTO struct {
 }
 
 func (r *recipeDTO) toDomain() (*recipe.Recipe, error) {
-	settings := recipe.NewRecipeSettings(
-		r.Settings.FilmSimulation,
-		r.Settings.DynamicRange,
-		r.Settings.Highlight,
-		r.Settings.Shadow,
-		r.Settings.Color,
-		r.Settings.NoiseReduction,
-		r.Settings.Sharpening,
-		r.Settings.Clarity,
-		r.Settings.GrainEffect,
-		r.Settings.ColorChromeEffect,
-		r.Settings.ColorChromeBlue,
-		r.Settings.WhiteBalance,
-		r.Settings.Iso,
-		r.Settings.ExposureCompensation,
+	settings := recipe.RecipeSettingsFromPrimitives(
+		recipe.RecipeSettingsPrimitives{
+			FilmSimulation:       r.Settings.FilmSimulation,
+			DynamicRange:         r.Settings.DynamicRange,
+			Highlight:            r.Settings.Highlight,
+			Shadow:               r.Settings.Shadow,
+			Color:                r.Settings.Color,
+			NoiseReduction:       r.Settings.NoiseReduction,
+			Sharpening:           r.Settings.Sharpening,
+			Clarity:              r.Settings.Clarity,
+			GrainEffect:          r.Settings.GrainEffect,
+			ColorChromeEffect:    r.Settings.ColorChromeEffect,
+			ColorChromeBlue:      r.Settings.ColorChromeBlue,
+			WhiteBalance:         r.Settings.WhiteBalance,
+			Iso:                  r.Settings.Iso,
+			ExposureCompensation: r.Settings.ExposureCompensation,
+		},
 	)
 
-	return recipe.CreateRecipe(
+	return recipe.Create(
 		r.ID,
 		r.Name,
 		settings,

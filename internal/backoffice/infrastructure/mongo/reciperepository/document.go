@@ -77,7 +77,7 @@ func (p recipeDocument) toDomain() *recipe.Recipe {
 		ExposureCompensation: p.Settings.ExposureCompensation,
 	}
 
-	recipe, _ := recipe.RecipeFromPrimitives(
+	recipe, _ := recipe.FromPrimitives(
 		recipe.RecipePrimitives{
 			Name:     p.Name,
 			Settings: settings,

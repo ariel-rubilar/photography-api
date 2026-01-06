@@ -26,23 +26,6 @@ func new(id, title, recipeID string, url PhotoUrl) *Photo {
 	}
 }
 
-func Build(id, title, url, recipeID string) (*Photo, error) {
-	urlVO, err := NewPhotoUrl(url)
-
-	if err != nil {
-		return nil, err
-	}
-
-	photo := new(
-		id,
-		title,
-		recipeID,
-		urlVO,
-	)
-
-	return photo, nil
-}
-
 func Create(id, title, url, recipeID string) (*Photo, error) {
 	urlVO, err := NewPhotoUrl(url)
 
@@ -62,7 +45,24 @@ func Create(id, title, url, recipeID string) (*Photo, error) {
 	return photo, nil
 }
 
-func FromPrimitives(pr PhotoPrimitives) *Photo {
+func FromPrimitives(pr PhotoPrimitives) (*Photo, error) {
+	urlVO, err := NewPhotoUrl(pr.URL)
+
+	if err != nil {
+		return nil, err
+	}
+
+	photo := new(
+		pr.ID,
+		pr.Title,
+		pr.RecipeID,
+		urlVO,
+	)
+
+	return photo, nil
+}
+
+func UnsafeFromPrimitives(pr PhotoPrimitives) *Photo {
 	return new(
 		pr.ID,
 		pr.Title,

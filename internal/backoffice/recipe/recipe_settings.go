@@ -34,7 +34,7 @@ type RecipeSettings struct {
 	exposureCompensation string
 }
 
-func NewRecipeSettings(
+func newRecipeSettings(
 	filmSimulation,
 	dynamicRange,
 	highlight,

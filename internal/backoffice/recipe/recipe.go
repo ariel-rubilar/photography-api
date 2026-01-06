@@ -1,28 +1,5 @@
 package recipe
 
-import (
-	"fmt"
-	"strings"
-)
-
-type RecipeName struct {
-	value string
-}
-
-func NewRecipeName(value string) (RecipeName, error) {
-	value = strings.TrimSpace(value)
-	value = strings.ToLower(value)
-
-	if value == "" {
-		return RecipeName{}, fmt.Errorf("recipe name cannot be empty")
-	}
-	return RecipeName{value: value}, nil
-}
-
-func (rn RecipeName) Value() string {
-	return rn.value
-}
-
 type RecipePrimitives struct {
 	Name     string
 	Settings RecipeSettingsPrimitives
@@ -37,27 +14,34 @@ type Recipe struct {
 	link     string
 }
 
-func NewRecipe(id string, name string, settings RecipeSettings, link string) (*Recipe, error) {
-	nameObj, err := NewRecipeName(name)
+func new(id string, name RecipeName, settings RecipeSettings, link string) *Recipe {
+	return &Recipe{
+		id:       id,
+		name:     name,
+		settings: settings,
+		link:     link,
+	}
+}
+
+func Create(id string, name string, settings RecipeSettings, link string) (*Recipe, error) {
+
+	nameVO, err := NewRecipeName(name)
 	if err != nil {
 		return nil, err
 	}
-	return &Recipe{
-		id:       id,
-		name:     nameObj,
-		settings: settings,
-		link:     link,
-	}, nil
+
+	return new(id, nameVO, settings, link), nil
 }
 
-func CreateRecipe(id string, name string, settings RecipeSettings, link string) (*Recipe, error) {
-	return NewRecipe(id, name, settings, link)
-}
-
-func RecipeFromPrimitives(rp RecipePrimitives) (*Recipe, error) {
+func FromPrimitives(rp RecipePrimitives) (*Recipe, error) {
 	settings := RecipeSettingsFromPrimitives(rp.Settings)
 
-	return NewRecipe(rp.ID, rp.Name, settings, rp.Link)
+	nameVO, err := NewRecipeName(rp.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return new(rp.ID, nameVO, settings, rp.Link), nil
 }
 
 func (r Recipe) ID() string {
