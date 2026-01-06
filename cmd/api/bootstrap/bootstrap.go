@@ -13,7 +13,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infrastructure/mongo/photoreadrepository"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infrastructure/mongo/photoviewdrepository"
 	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/infrastructure/mongo/recipereadrepository"
-	"github.com/ariel-rubilar/photography-api/internal/projection/photoview/projector"
+	savephotoviewsaver "github.com/ariel-rubilar/photography-api/internal/projection/photoview/usecases/photoviewsaver"
 
 	"github.com/ariel-rubilar/photography-api/internal/server"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/imbus"
@@ -52,7 +52,7 @@ func Run() error {
 
 	photoViewRepository := photoviewdrepository.NewMongoRepository(mongoClient)
 
-	photoViewProjector := projector.New(photoReadRepository, recipeReadRepository, photoViewRepository)
+	photoViewProjector := savephotoviewsaver.NewSavePhotoViewOnPhotoCreated(photoReadRepository, recipeReadRepository, photoViewRepository)
 
 	bus.Subscribe(photo.PhotoCreatedEventType, photoViewProjector)
 
