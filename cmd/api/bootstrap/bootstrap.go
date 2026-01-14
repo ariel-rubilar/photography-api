@@ -2,6 +2,9 @@ package bootstrap
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/ariel-rubilar/photography-api/internal/env"
 
@@ -11,10 +14,22 @@ import (
 )
 
 func Run() error {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go func() {
+		<-quit
+		cancel()
+	}()
 
 	cfg, err := env.LoadConfig()
+
+	if err != nil {
+		return err
+	}
 
 	mongoClient, err := mongo.NewClient(cfg.MongoURI)
 
@@ -25,12 +40,6 @@ func Run() error {
 	defer func() {
 		_ = mongoClient.Disconnect(ctx)
 	}()
-
-	err = mongoClient.Ping(ctx, nil)
-
-	if err != nil {
-		return err
-	}
 
 	bus := imbus.New()
 
@@ -51,5 +60,5 @@ func Run() error {
 		Env: cfg.ServerEnv,
 	}, providers)
 
-	return s.Start()
+	return s.Start(ctx)
 }

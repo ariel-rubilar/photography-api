@@ -1,6 +1,11 @@
 package server
 
 import (
+	"context"
+	"log"
+	"net/http"
+	"time"
+
 	backofficehttp "github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
@@ -47,18 +52,36 @@ func New(cfg Config, providers *Providers) *server {
 	}
 }
 
-func (s *server) Start() error {
+func (s *server) Start(ctx context.Context) error {
 
 	s.engine.Use(gin.Recovery())
 
 	s.registerRoutes(s.engine)
 
-	return s.engine.Run()
+	srv := &http.Server{
+		Addr:    ":8080",
+		Handler: s.engine,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s", err)
+		}
+		log.Println("Server is listening on :8080")
+	}()
+
+	<-ctx.Done()
+	log.Println("shutting down server...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return srv.Shutdown(shutdownCtx)
 }
 
 func (s *server) registerRoutes(r *gin.Engine) {
 
-	apiVersionGroup := s.engine.Group("/api/v1")
+	apiVersionGroup := r.Group("/api/v1")
 
 	backofficeGroup := apiVersionGroup.Group("/backoffice")
 
