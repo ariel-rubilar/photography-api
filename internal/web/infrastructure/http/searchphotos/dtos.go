@@ -2,7 +2,7 @@ package searchphotos
 
 import "github.com/ariel-rubilar/photography-api/internal/web/photo"
 
-type photoRecipeSettings struct {
+type PhotoRecipeSettings struct {
 	FilmSimulation       string `json:"filmSimulation"`
 	DynamicRange         string `json:"dynamicRange"`
 	Highlight            string `json:"highlight"`
@@ -19,34 +19,34 @@ type photoRecipeSettings struct {
 	ExposureCompensation string `json:"exposureCompensation"`
 }
 
-type photoRecipe struct {
+type PhotoRecipe struct {
 	Name     string              `json:"name"`
-	Settings photoRecipeSettings `json:"settings"`
+	Settings PhotoRecipeSettings `json:"settings"`
 	Link     string              `json:"link"`
 }
 
-type photoDTO struct {
+type PhotoDTO struct {
 	ID     string      `json:"id"`
 	Title  string      `json:"title"`
 	URL    string      `json:"url"`
-	Recipe photoRecipe `json:"recipe"`
+	Recipe PhotoRecipe `json:"recipe"`
 }
 
-func newSearchPhotosData(photos []*photo.Photo) []photoDTO {
+func newSearchPhotosData(photos []*photo.Photo) []PhotoDTO {
 
-	var photoDTOs []photoDTO
+	var photoDTOs []PhotoDTO
 
 	for _, photo := range photos {
 
 		primitives := photo.ToPrimitives()
 
-		photoDTOs = append(photoDTOs, photoDTO{
+		photoDTOs = append(photoDTOs, PhotoDTO{
 			ID:    primitives.ID,
 			Title: primitives.Title,
 			URL:   primitives.URL,
-			Recipe: photoRecipe{
+			Recipe: PhotoRecipe{
 				Name: primitives.Recipe.Name,
-				Settings: photoRecipeSettings{
+				Settings: PhotoRecipeSettings{
 					FilmSimulation:       primitives.Recipe.Settings.FilmSimulation,
 					DynamicRange:         primitives.Recipe.Settings.DynamicRange,
 					Highlight:            primitives.Recipe.Settings.Highlight,
