@@ -7,10 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ariel-rubilar/photography-api/internal/env"
 	"go.uber.org/zap"
 
 	"github.com/ariel-rubilar/photography-api/internal/server"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/imbus"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/mongo"
 )

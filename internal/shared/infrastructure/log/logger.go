@@ -1,7 +1,7 @@
 package log
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/env"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"go.uber.org/zap"
 )
 

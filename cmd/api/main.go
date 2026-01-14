@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ariel-rubilar/photography-api/cmd/api/bootstrap"
-	"github.com/ariel-rubilar/photography-api/internal/env"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/log"
 )
 

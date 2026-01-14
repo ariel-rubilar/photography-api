@@ -9,7 +9,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
-	"github.com/ariel-rubilar/photography-api/internal/env"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
 	"go.uber.org/zap"
