@@ -32,11 +32,7 @@ type photoDTO struct {
 	Recipe photoRecipe `json:"recipe"`
 }
 
-type searchPhotosResponse struct {
-	Data []photoDTO `json:"data"`
-}
-
-func newSearchPhotosResponse(photos []*photo.Photo) searchPhotosResponse {
+func newSearchPhotosData(photos []*photo.Photo) []photoDTO {
 
 	var photoDTOs []photoDTO
 
@@ -71,7 +67,5 @@ func newSearchPhotosResponse(photos []*photo.Photo) searchPhotosResponse {
 		})
 	}
 
-	return searchPhotosResponse{
-		Data: photoDTOs,
-	}
+	return photoDTOs
 }

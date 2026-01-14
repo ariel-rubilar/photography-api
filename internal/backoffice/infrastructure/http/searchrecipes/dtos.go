@@ -28,11 +28,7 @@ type recipeDTO struct {
 	Link     string     `json:"link"`
 }
 
-type searchPhotosResponse struct {
-	Data []recipeDTO `json:"data"`
-}
-
-func newSearchRecipesResponse(recipes []*recipe.Recipe) searchPhotosResponse {
+func newSearchRecipesData(recipes []*recipe.Recipe) []recipeDTO {
 
 	recipeDTOs := make([]recipeDTO, 0, len(recipes))
 
@@ -63,7 +59,5 @@ func newSearchRecipesResponse(recipes []*recipe.Recipe) searchPhotosResponse {
 		})
 	}
 
-	return searchPhotosResponse{
-		Data: recipeDTOs,
-	}
+	return recipeDTOs
 }

@@ -3,6 +3,8 @@ package searchrecipes
 import (
 	"net/http"
 
+	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
+
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/httperror"
 	"github.com/gin-gonic/gin"
@@ -18,7 +20,7 @@ func NewHandler(searcher *recipesearcher.Searcher) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, newSearchRecipesResponse(photos))
+		c.JSON(http.StatusOK, sharedhttp.NewSuccessResponse(newSearchRecipesData(photos)))
 
 	}
 }

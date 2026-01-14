@@ -14,10 +14,9 @@ type ErrorResponse struct {
 	Error Error `json:"error"`
 }
 
-func NewSuccessResponse(data any, meta any) *SuccessResponse {
+func NewSuccessResponse(data any) *SuccessResponse {
 	return &SuccessResponse{
 		Data: data,
-		Meta: meta,
 	}
 }
 
