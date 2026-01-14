@@ -27,6 +27,7 @@ func ErrorHandler(logger *zap.Logger) gin.HandlerFunc {
 		if he, ok := err.(httperror.Error); ok {
 			status = he.StatusCode
 			err = he.Err
+			msg = he.Message
 		}
 
 		if de, ok := err.(domainerror.Error); ok {
@@ -39,6 +40,7 @@ func ErrorHandler(logger *zap.Logger) gin.HandlerFunc {
 			zap.Int("http_status", status),
 			zap.String("path", c.FullPath()),
 			zap.String("method", c.Request.Method),
+			zap.String("message", msg),
 		}
 
 		if status >= 500 {

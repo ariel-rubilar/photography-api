@@ -1,10 +1,10 @@
 package saverecipe
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/httperror"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,27 +14,21 @@ func NewHandler(searcher *recipesaver.Saver) gin.HandlerFunc {
 		var request recipeDTO
 
 		if err := c.ShouldBind(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": fmt.Sprintf("invalid request body: %v", err),
-			})
+			c.Error(httperror.Wrap(err, http.StatusBadRequest, "invalid request body"))
 			return
 		}
 
 		recipe, err := request.toDomain()
 
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": fmt.Sprintf("invalid recipe data: %v", err),
-			})
+			c.Error(httperror.Wrap(err, http.StatusBadRequest, "invalid recipe data"))
 			return
 		}
 
 		err = searcher.Save(c.Request.Context(), recipe)
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": fmt.Sprintf("failed to save recipe: %v", err),
-			})
+			c.Error(httperror.Wrap(err, http.StatusInternalServerError, "failed to save recipe"))
 			return
 		}
 

@@ -1,10 +1,10 @@
 package savephoto
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/httperror"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,18 +14,16 @@ func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 		var request photoDTO
 
 		if err := c.ShouldBind(&request); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": fmt.Sprintf("invalid request body: %v", err),
-			})
+
+			c.Error(httperror.Wrap(err, http.StatusBadRequest, "invalid request body"))
+
 			return
 		}
 
 		err := searcher.Save(c.Request.Context(), request.ID, request.Title, request.URL, request.RecipeID)
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": fmt.Sprintf("failed to save recipe: %v", err),
-			})
+			c.Error(httperror.Wrap(err, http.StatusInternalServerError, "failed to save recipe"))
 			return
 		}
 
