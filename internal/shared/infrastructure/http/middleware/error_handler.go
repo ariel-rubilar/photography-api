@@ -28,6 +28,7 @@ func ErrorHandler(logger *zap.Logger) gin.HandlerFunc {
 			status = he.StatusCode
 			err = he.Err
 			msg = he.Message
+			code = he.Code
 		}
 
 		if de, ok := err.(domainerror.Error); ok {

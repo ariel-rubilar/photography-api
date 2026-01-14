@@ -6,6 +6,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/handler"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/health"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
@@ -37,6 +38,9 @@ func NewGinEngine(cfg Config, providers *Providers) *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	e := gin.New()
+
+	e.NoRoute(handler.NoFound())
+	e.NoMethod(handler.NoMethod())
 
 	e.Use(
 		middleware.RequestID(),
