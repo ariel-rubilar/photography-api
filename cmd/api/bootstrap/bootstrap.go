@@ -47,7 +47,9 @@ func Run() error {
 		PhotoSaver:     backofficeProviders.PhotoSaver,
 	}
 
-	s := server.New(providers)
+	s := server.New(server.Config{
+		Env: cfg.ServerEnv,
+	}, providers)
 
 	return s.Start()
 }

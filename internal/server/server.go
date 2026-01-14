@@ -22,8 +22,26 @@ type server struct {
 	providers *Providers
 }
 
-func New(providers *Providers) *server {
-	e := gin.Default()
+type Env string
+
+const (
+	Development Env = "development"
+	Production  Env = "production"
+)
+
+type Config struct {
+	Env Env
+}
+
+func New(cfg Config, providers *Providers) *server {
+	e := gin.New()
+
+	if cfg.Env == Development {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	return &server{
 		engine: e, providers: providers,
 	}
