@@ -6,7 +6,7 @@ CMD_PATH := ./cmd/api
 BIN_DIR := bin
 BINARY := $(BIN_DIR)/$(APP_NAME)
 
-.PHONY: all build run start install fmt vet tidy mod-download test clean help
+.PHONY: all build run start install fmt vet tidy mod-download test clean setup precommit help
 
 all: build
 
@@ -58,6 +58,17 @@ clean:
 	@echo "Cleaning..."
 	@rm -rf $(BIN_DIR)
 
+
+# Setup Lefthook for git hooks
+setup:
+	@echo "🔧 Installing Lefthook..."
+	@lefthook install
+	@echo "✅ Lefthook installed"
+
+precommit:
+	@echo "Running pre-commit hooks..."
+	@lefthook run pre-commit
+
 # Help
 help:
 	@printf "Available targets:\n"
@@ -70,3 +81,5 @@ help:
 	@printf "  make mod-download  - Download modules\n"
 	@printf "  make test          - Run tests\n"
 	@printf "  make clean         - Remove ./bin\n"
+    @printf "  make setup         - Setup Lefthook for git hooks\n"
+    @printf "  make precommit     - Run pre-commit hooks via Lefthook\n"
