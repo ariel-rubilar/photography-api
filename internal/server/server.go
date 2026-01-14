@@ -47,16 +47,18 @@ func New(cfg Config, providers *Providers) *server {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	return &server{
+	e.Use(gin.Recovery())
+
+	srv := &server{
 		engine: e, providers: providers,
 	}
+
+	srv.registerRoutes(e)
+
+	return srv
 }
 
 func (s *server) Start(ctx context.Context) error {
-
-	s.engine.Use(gin.Recovery())
-
-	s.registerRoutes(s.engine)
 
 	srv := &http.Server{
 		Addr:    ":8080",
