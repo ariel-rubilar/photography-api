@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,13 +29,13 @@ func Run() error {
 	cfg, err := env.LoadConfig()
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load config: %w", err)
 	}
 
 	mongoClient, err := mongo.NewClient(cfg.MongoURI)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create mongo client: %w", err)
 	}
 
 	defer func() {
@@ -54,6 +55,7 @@ func Run() error {
 		RecipeSearcher: backofficeProviders.RecipeSearcher,
 		RecipeSaver:    backofficeProviders.RecipeSaver,
 		PhotoSaver:     backofficeProviders.PhotoSaver,
+		DB:             mongoClient,
 	}
 
 	s := server.New(server.Config{

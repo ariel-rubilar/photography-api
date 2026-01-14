@@ -10,9 +10,14 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
+
+	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
+
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Providers struct {
@@ -20,6 +25,7 @@ type Providers struct {
 	RecipeSaver    *recipesaver.Saver
 	PhotoSaver     *photosaver.Saver
 	PhotoSearcher  *searcher.Searcher
+	DB             *mongo.Client
 }
 
 type server struct {
@@ -39,15 +45,24 @@ type Config struct {
 }
 
 func New(cfg Config, providers *Providers) *server {
-	e := gin.New()
 
 	if cfg.Env == Development {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
+	e := gin.New()
 
-	e.Use(gin.Recovery())
+	e.Use(
+		middleware.RequestID(),
+		middleware.Logger(),
+		middleware.Recovery(),
+		middleware.ErrorHandler(),
+	)
+
+	sharedhttp.RegisterRoutes(e.Group("/"), &sharedhttp.Providers{
+		DB: providers.DB,
+	})
 
 	srv := &server{
 		engine: e, providers: providers,
