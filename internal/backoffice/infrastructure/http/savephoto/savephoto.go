@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewHandler(searcher photosaver.Saver) gin.HandlerFunc {
+func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		var request photoDTO

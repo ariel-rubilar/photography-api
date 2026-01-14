@@ -1,22 +1,20 @@
 package server
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/savephoto"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/saverecipe"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/searchrecipes"
+	backofficehttp "github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
-	"github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http/searchphotos"
+	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"github.com/gin-gonic/gin"
 )
 
 type Providers struct {
-	PhotoSearcher  *searcher.Searcher
 	RecipeSearcher *recipesearcher.Searcher
 	RecipeSaver    *recipesaver.Saver
 	PhotoSaver     *photosaver.Saver
+	PhotoSearcher  *searcher.Searcher
 }
 
 type server struct {
@@ -35,18 +33,26 @@ func (s *server) Start() error {
 
 	s.engine.Use(gin.Recovery())
 
-	backofficeGroup := s.engine.Group("/backoffice")
+	s.registerRoutes(s.engine)
 
-	backofficeApiGroup := backofficeGroup.Group("/api/v1")
-
-	backofficeApiGroup.GET("/recipes", searchrecipes.NewHandler(s.providers.RecipeSearcher))
-	backofficeApiGroup.POST("/recipes", saverecipe.NewHandler(s.providers.RecipeSaver))
-	backofficeApiGroup.POST("/photos", savephoto.NewHandler(*s.providers.PhotoSaver))
-
-	webGroup := s.engine.Group("/web")
-
-	webApiGroup := webGroup.Group("/api/v1")
-
-	webApiGroup.GET("/photos", searchphotos.NewHandler(s.providers.PhotoSearcher))
 	return s.engine.Run()
+}
+
+func (s *server) registerRoutes(r *gin.Engine) {
+
+	apiVersionGroup := s.engine.Group("/api/v1")
+
+	backofficeGroup := apiVersionGroup.Group("/backoffice")
+
+	backofficehttp.RegisterRoutes(backofficeGroup, &backofficehttp.Providers{
+		RecipeSearcher: s.providers.RecipeSearcher,
+		RecipeSaver:    s.providers.RecipeSaver,
+		PhotoSaver:     s.providers.PhotoSaver,
+	})
+
+	webGroup := apiVersionGroup.Group("/web")
+
+	webhttp.RegisterRoutes(webGroup, &webhttp.Providers{
+		PhotoSearcher: s.providers.PhotoSearcher,
+	})
 }
