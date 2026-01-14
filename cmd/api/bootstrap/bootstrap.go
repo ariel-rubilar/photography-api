@@ -8,13 +8,14 @@ import (
 	"syscall"
 
 	"github.com/ariel-rubilar/photography-api/internal/env"
+	"go.uber.org/zap"
 
 	"github.com/ariel-rubilar/photography-api/internal/server"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/imbus"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/mongo"
 )
 
-func Run() error {
+func Run(cfg env.Config, logger *zap.Logger) error {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -25,12 +26,6 @@ func Run() error {
 		<-quit
 		cancel()
 	}()
-
-	cfg, err := env.LoadConfig()
-
-	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
-	}
 
 	mongoClient, err := mongo.NewClient(cfg.MongoURI)
 
@@ -56,6 +51,7 @@ func Run() error {
 		RecipeSaver:    backofficeProviders.RecipeSaver,
 		PhotoSaver:     backofficeProviders.PhotoSaver,
 		DB:             mongoClient,
+		Logger:         logger,
 	}
 
 	s := server.New(server.Config{

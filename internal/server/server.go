@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -10,8 +9,10 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
+	"github.com/ariel-rubilar/photography-api/internal/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
+	"go.uber.org/zap"
 
 	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
 
@@ -26,6 +27,7 @@ type Providers struct {
 	PhotoSaver     *photosaver.Saver
 	PhotoSearcher  *searcher.Searcher
 	DB             *mongo.Client
+	Logger         *zap.Logger
 }
 
 type server struct {
@@ -33,20 +35,13 @@ type server struct {
 	providers *Providers
 }
 
-type Env string
-
-const (
-	Development Env = "development"
-	Production  Env = "production"
-)
-
 type Config struct {
-	Env Env
+	Env env.Env
 }
 
 func New(cfg Config, providers *Providers) *server {
 
-	if cfg.Env == Development {
+	if cfg.Env == env.Development {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
@@ -55,9 +50,9 @@ func New(cfg Config, providers *Providers) *server {
 
 	e.Use(
 		middleware.RequestID(),
-		middleware.Logger(),
-		middleware.Recovery(),
-		middleware.ErrorHandler(),
+		middleware.Logger(providers.Logger),
+		middleware.Recovery(providers.Logger),
+		middleware.ErrorHandler(providers.Logger),
 	)
 
 	sharedhttp.RegisterRoutes(e.Group("/"), &sharedhttp.Providers{
@@ -82,13 +77,13 @@ func (s *server) Start(ctx context.Context) error {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s", err)
+			s.providers.Logger.Fatal("listen: %s\n", zap.Error(err))
 		}
-		log.Println("Server is listening on :8080")
+		s.providers.Logger.Info("server started")
 	}()
 
 	<-ctx.Done()
-	log.Println("shutting down server...")
+	s.providers.Logger.Info("shutting down server...")
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

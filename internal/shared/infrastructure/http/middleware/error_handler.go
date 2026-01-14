@@ -1,8 +1,11 @@
 package middleware
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+)
 
-func ErrorHandler() gin.HandlerFunc {
+func ErrorHandler(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
 
@@ -11,6 +14,11 @@ func ErrorHandler() gin.HandlerFunc {
 		}
 
 		err := c.Errors.Last().Err
+
+		logger.Error("internal_error",
+			zap.Error(err),
+			zap.Stack("stack"),
+		)
 
 		switch err.(type) {
 

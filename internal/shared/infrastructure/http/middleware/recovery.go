@@ -1,14 +1,16 @@
 package middleware
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
-func Recovery() gin.HandlerFunc {
+func Recovery(logger *zap.Logger) gin.HandlerFunc {
 	return gin.CustomRecovery(func(c *gin.Context, err any) {
-		log.Printf("panic: %v", err)
+		logger.Error("panic_recovered",
+			zap.Any("panic", err),
+			zap.Stack("stack"),
+		)
 		c.AbortWithStatusJSON(500, gin.H{
 			"error": "internal_server_error",
 		})

@@ -4,13 +4,19 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ariel-rubilar/photography-api/internal/server"
 	"github.com/joho/godotenv"
+)
+
+type Env string
+
+const (
+	Development Env = "development"
+	Production  Env = "production"
 )
 
 type Config struct {
 	MongoURI  string
-	ServerEnv server.Env
+	ServerEnv Env
 }
 
 func LoadConfig() (*Config, error) {
@@ -27,10 +33,10 @@ func LoadConfig() (*Config, error) {
 
 	env := os.Getenv("SERVER_ENV")
 
-	var serverEnv server.Env = server.Production
+	var serverEnv Env = Production
 
 	if env != "production" {
-		serverEnv = server.Development
+		serverEnv = Development
 	}
 
 	return &Config{
