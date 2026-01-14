@@ -81,5 +81,5 @@ help:
 	@printf "  make mod-download  - Download modules\n"
 	@printf "  make test          - Run tests\n"
 	@printf "  make clean         - Remove ./bin\n"
-    @printf "  make setup         - Setup Lefthook for git hooks\n"
-    @printf "  make precommit     - Run pre-commit hooks via Lefthook\n"
+	@printf "  make setup         - Setup Lefthook for git hooks\n"
+	@printf "  make precommit     - Run pre-commit hooks via Lefthook\n"
