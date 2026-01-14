@@ -14,7 +14,7 @@ func NewHandler(searcher *recipesearcher.Searcher) gin.HandlerFunc {
 		photos, err := searcher.Search(c.Request.Context())
 
 		if err != nil {
-			c.Error(httperror.Wrap(err, http.StatusInternalServerError, "failed to search recipes"))
+			c.Error(httperror.WrapInternalServerError(err))
 			return
 		}
 

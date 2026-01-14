@@ -14,7 +14,8 @@ func NewHandler(searcher *searcher.Searcher) gin.HandlerFunc {
 		photos, err := searcher.Search(c.Request.Context())
 
 		if err != nil {
-			c.Error(httperror.Wrap(err, http.StatusInternalServerError, "internal server error"))
+			c.Error(httperror.WrapInternalServerError(err))
+
 			return
 		}
 

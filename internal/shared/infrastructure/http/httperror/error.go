@@ -1,5 +1,7 @@
 package httperror
 
+import "net/http"
+
 type Error struct {
 	Err        error
 	StatusCode int
@@ -10,10 +12,35 @@ func (e Error) Error() string {
 	return e.Err.Error()
 }
 
-func Wrap(err error, statusCode int, message string) *Error {
-	return &Error{
+type Options func(*Error) *Error
+
+func Wrap(err error, statusCode int, options ...Options) *Error {
+
+	e := &Error{
 		Err:        err,
-		StatusCode: statusCode,
-		Message:    message,
+		StatusCode: http.StatusInternalServerError,
+		Message:    "internal server error",
 	}
+
+	for _, option := range options {
+		e = option(e)
+	}
+
+	return e
+
+}
+
+func WithMessage(message string) Options {
+	return func(e *Error) *Error {
+		e.Message = message
+		return e
+	}
+}
+
+func WrapInternalServerError(err error, options ...Options) *Error {
+	return Wrap(err, http.StatusInternalServerError, options...)
+}
+
+func WrapBadRequestError(err error, options ...Options) *Error {
+	return Wrap(err, http.StatusInternalServerError, options...)
 }

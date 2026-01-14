@@ -14,16 +14,14 @@ func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 		var request photoDTO
 
 		if err := c.ShouldBind(&request); err != nil {
-
-			c.Error(httperror.Wrap(err, http.StatusBadRequest, "invalid request body"))
-
+			c.Error(httperror.WrapBadRequestError(err, httperror.WithMessage("invalid request body")))
 			return
 		}
 
 		err := searcher.Save(c.Request.Context(), request.ID, request.Title, request.URL, request.RecipeID)
 
 		if err != nil {
-			c.Error(httperror.Wrap(err, http.StatusInternalServerError, "failed to save recipe"))
+			c.Error(httperror.WrapInternalServerError(err))
 			return
 		}
 
