@@ -17,6 +17,7 @@ func New(handler http.Handler, logger *zap.Logger) *server {
 
 	srv := &server{
 		handler: handler,
+		logger:  logger,
 	}
 
 	return srv
@@ -28,12 +29,12 @@ func (s *server) Start(ctx context.Context) error {
 		Addr:    ":8080",
 		Handler: s.handler,
 	}
+	s.logger.Info("server started")
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			s.logger.Fatal("listen: %s\n", zap.Error(err))
 		}
-		s.logger.Info("server started")
 	}()
 
 	<-ctx.Done()
