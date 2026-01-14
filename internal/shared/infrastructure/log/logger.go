@@ -10,8 +10,12 @@ type Config struct {
 }
 
 func New(cfg Config) (*zap.Logger, error) {
+	zapCfg := zap.NewProductionConfig()
 	if cfg.Env == env.Development {
-		return zap.NewDevelopment()
+		zapCfg = zap.NewDevelopmentConfig()
 	}
-	return zap.NewProduction()
+
+	zapCfg.DisableStacktrace = true
+
+	return zapCfg.Build()
 }
