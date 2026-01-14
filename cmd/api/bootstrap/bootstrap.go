@@ -9,10 +9,10 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/ariel-rubilar/photography-api/internal/server"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/imbus"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/mongo"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/server"
 )
 
 func Run(cfg env.Config, logger *zap.Logger) error {
