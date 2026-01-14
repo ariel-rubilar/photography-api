@@ -1,8 +1,8 @@
-package http
+package health
 
 import (
-	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/handler/live"
-	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/handler/ready"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/health/live"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/health/ready"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )

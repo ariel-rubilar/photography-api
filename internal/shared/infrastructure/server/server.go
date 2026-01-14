@@ -5,65 +5,19 @@ import (
 	"net/http"
 	"time"
 
-	backofficehttp "github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
-	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
-	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
-	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
 	"go.uber.org/zap"
-
-	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
-
-	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-type Providers struct {
-	RecipeSearcher *recipesearcher.Searcher
-	RecipeSaver    *recipesaver.Saver
-	PhotoSaver     *photosaver.Saver
-	PhotoSearcher  *searcher.Searcher
-	DB             *mongo.Client
-	Logger         *zap.Logger
-}
-
 type server struct {
-	engine    *gin.Engine
-	providers *Providers
+	handler http.Handler
+	logger  *zap.Logger
 }
 
-type Config struct {
-	Env env.Env
-}
-
-func New(cfg Config, providers *Providers) *server {
-
-	if cfg.Env == env.Development {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
-	}
-	e := gin.New()
-
-	e.Use(
-		middleware.RequestID(),
-		middleware.Logger(providers.Logger),
-		middleware.Recovery(providers.Logger),
-		middleware.ErrorHandler(providers.Logger),
-	)
-
-	sharedhttp.RegisterRoutes(e.Group("/"), &sharedhttp.Providers{
-		DB: providers.DB,
-	})
+func New(handler http.Handler, logger *zap.Logger) *server {
 
 	srv := &server{
-		engine: e, providers: providers,
+		handler: handler,
 	}
-
-	srv.registerRoutes(e)
 
 	return srv
 }
@@ -72,40 +26,21 @@ func (s *server) Start(ctx context.Context) error {
 
 	srv := &http.Server{
 		Addr:    ":8080",
-		Handler: s.engine,
+		Handler: s.handler,
 	}
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			s.providers.Logger.Fatal("listen: %s\n", zap.Error(err))
+			s.logger.Fatal("listen: %s\n", zap.Error(err))
 		}
-		s.providers.Logger.Info("server started")
+		s.logger.Info("server started")
 	}()
 
 	<-ctx.Done()
-	s.providers.Logger.Info("shutting down server...")
+	s.logger.Info("shutting down server...")
 
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	return srv.Shutdown(shutdownCtx)
-}
-
-func (s *server) registerRoutes(r *gin.Engine) {
-
-	apiVersionGroup := r.Group("/api/v1")
-
-	backofficeGroup := apiVersionGroup.Group("/backoffice")
-
-	backofficehttp.RegisterRoutes(backofficeGroup, &backofficehttp.Providers{
-		RecipeSearcher: s.providers.RecipeSearcher,
-		RecipeSaver:    s.providers.RecipeSaver,
-		PhotoSaver:     s.providers.PhotoSaver,
-	})
-
-	webGroup := apiVersionGroup.Group("/web")
-
-	webhttp.RegisterRoutes(webGroup, &webhttp.Providers{
-		PhotoSearcher: s.providers.PhotoSearcher,
-	})
 }
