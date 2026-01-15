@@ -5,15 +5,15 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/backoffice/api/v1/recipes
+  url: {{baseUrl}}/api/v1/backoffice/recipes
   body: json
   auth: inherit
 }
 
 body:json {
    {
-       "id":"694f1a15be2856a03c86d2fd", 
-       "name": "Yashica Golden 80s",
+       "id":"{{recipe_auto_generated_id}}", 
+       "name": "Yashica Golden 80s v2",
         "settings": {
           "filmSimulation": "Classic Negative",
           "dynamicRange": "DR400",
@@ -36,6 +36,17 @@ body:json {
 
 vars:pre-request {
   env.baseUrl: 
+}
+
+script:pre-request {
+  const generateObjectId = () => {
+      return Math.floor(Date.now() / 1000).toString(16) + 
+             'xxxxxxxxxxxxxxxx'.replace(/x/g, function() {
+                 return (Math.floor(Math.random() * 16)).toString(16);
+             });
+  }
+  
+  bru.setVar("recipe_auto_generated_id", generateObjectId());
 }
 
 settings {

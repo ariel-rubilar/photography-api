@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/web/api/v1/photos
+  url: {{baseUrl}}/api/v1/web/photos
   body: none
   auth: inherit
 }
 
 vars:pre-request {
-  env.baseUrl:
+  env.baseUrl: 
 }
 
 settings {
