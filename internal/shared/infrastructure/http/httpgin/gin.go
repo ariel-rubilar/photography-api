@@ -25,7 +25,7 @@ type Providers struct {
 	PhotoSearcher   *searcher.Searcher
 	DB              *mongo.Client
 	Logger          *zap.Logger
-	UploadURLGetter uploadurlgetter.Getter
+	UploadURLGetter *uploadurlgetter.Getter
 }
 
 type Config struct {
@@ -70,7 +70,7 @@ func registerRoutes(r *gin.Engine, providers *Providers) {
 		RecipeSearcher:  providers.RecipeSearcher,
 		RecipeSaver:     providers.RecipeSaver,
 		PhotoSaver:      providers.PhotoSaver,
-		UploadURLGetter: &providers.UploadURLGetter,
+		UploadURLGetter: providers.UploadURLGetter,
 	})
 
 	webGroup := apiVersionGroup.Group("/web")

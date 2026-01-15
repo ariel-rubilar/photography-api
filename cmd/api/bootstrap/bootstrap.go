@@ -48,7 +48,7 @@ func Run(cfg env.Config, logger *zap.Logger) error {
 
 	realClock := realclock.RealClock{}
 
-	r2Client, err := r2.NewClient(r2.Config{
+	r2Client, err := r2.NewClient(ctx, r2.Config{
 		AccessKeyID:     cfg.R2.AccessKeyID,
 		SecretAccessKey: cfg.R2.SecretAccessKey,
 		AccountID:       cfg.R2.AccountID,
@@ -69,7 +69,7 @@ func Run(cfg env.Config, logger *zap.Logger) error {
 		PhotoSaver:      backofficeProviders.PhotoSaver,
 		DB:              mongoClient,
 		Logger:          logger,
-		UploadURLGetter: *backofficeProviders.UploadURLGetter,
+		UploadURLGetter: backofficeProviders.UploadURLGetter,
 	}
 
 	handler := httpgin.NewGinEngine(httpgin.Config{

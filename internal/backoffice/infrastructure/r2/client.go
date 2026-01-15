@@ -16,9 +16,9 @@ type Config struct {
 	AccountID       string
 }
 
-func NewClient(params Config) (*s3.PresignClient, error) {
+func NewClient(ctx context.Context, params Config) (*s3.PresignClient, error) {
 	cfg, err := config.LoadDefaultConfig(
-		context.TODO(),
+		ctx,
 		config.WithCredentialsProvider(
 			credentials.NewStaticCredentialsProvider(
 				params.AccessKeyID,
