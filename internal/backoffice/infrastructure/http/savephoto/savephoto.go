@@ -22,7 +22,7 @@ func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 			return
 		}
 
-		err := searcher.Save(
+		err := searcher.Execute(
 			c.Request.Context(),
 			request.ID,
 			request.Title,

@@ -23,7 +23,7 @@ func New(repo photo.Repository, recipeRepo RecipeReadRepository, bus event.Bus) 
 	}
 }
 
-func (s *Saver) Save(ctx context.Context, id, title, url, recipeID string) error {
+func (s *Saver) Execute(ctx context.Context, id, title, url, recipeID string) error {
 
 	if err := s.ensurePhotoDoNotExists(ctx, id); err != nil {
 		return err
