@@ -13,21 +13,27 @@ import (
 func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		var request photoDTO
+		var request PhotoDTO
 
 		if err := c.ShouldBind(&request); err != nil {
 			c.Error(httperror.WrapBadRequestError(err, httperror.WithMessage("invalid request body")))
 			return
 		}
 
-		err := searcher.Save(c.Request.Context(), request.ID, request.Title, request.URL, request.RecipeID)
+		err := searcher.Save(
+			c.Request.Context(),
+			request.ID,
+			request.Title,
+			request.URL,
+			request.RecipeID,
+		)
 
 		if err != nil {
 			c.Error(httperror.WrapInternalServerError(err))
 			return
 		}
 
-		c.JSON(http.StatusOK, sharedhttp.NewSuccessResponse("photo saved successfully"))
+		c.JSON(http.StatusCreated, sharedhttp.NewSuccessResponse("photo saved successfully"))
 
 	}
 }
