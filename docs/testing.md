@@ -1,223 +1,73 @@
-# Object Mother Guidelines – Testing Best Practices
+# Testing Standards – Main Guide
 
-## Purpose
-
-The Object Mother pattern is used to **create fully valid domain objects for tests**.
-This document provides **all rules and examples** for writing Object Mothers in this project.
-It is intended for **developers and AI tools** to produce consistent, safe, and maintainable test code.
+Welcome to the main testing documentation for the `photography-api` project. This guide provides an overview of our testing philosophy, structure, and references to detailed standards for specific testing patterns. All contributors—human or AI—must follow these standards to ensure high-quality, maintainable, and consistent tests across the codebase.
 
 ---
 
-## 1. General Principles
+## 1. Overview
 
-1. **Test-only**
+Testing in this project is guided by two core standards:
 
-   * Object Mothers must live in test-only packages.
-   * Never import them in production code.
+- **Handler Testing Standard:** How to write robust, maintainable tests for HTTP handlers.
+- **Object Mother Testing Standard:** How to create and use test data builders (Object Mothers) for domain objects.
 
-2. **Valid by default**
-
-   * `Default<Entity>()` must always return a fully valid domain object.
-   * Avoid returning nil, invalid states, or partial objects.
-
-3. **Customizable**
-
-   * Use functional options (`With<Field>()`) to override defaults.
-   * Avoid creating specialized constructors like `PhotoWithID`.
-
-4. **Readable**
-
-   * Tests should read like a story using Object Mothers.
-   * Avoid hidden or surprising behavior in defaults.
-
-5. **Deterministic when necessary**
-
-   * Random data is allowed for general tests.
-   * Override fields explicitly for assertions that require deterministic values.
+These standards are designed to be clear, enforceable, and AI-friendly.
 
 ---
 
-## 2. Folder Structure
+## 2. Where to Find the Standards
 
-Object Mothers must be **inside the context test folder**:
+- [Handler Testing Standard](./handler_testing_standard.md)  
+  _Defines the required structure, helpers, and best practices for all HTTP handler tests._
 
-```
-/internal/<context>
-  /domain
-  /application
-  /test
-    /<entity>mother
-      photo_mother.go
-      recipe_mother.go
-```
-
-**Rules:**
-
-* Test code may import `internal/<context>/test/*`.
-* Production code must never import from `/test`.
-* Each context owns its Object Mothers.
+- [Object Mother Testing Standard](./object_mother_testing.md)  
+  _Explains how to build, organize, and use Object Mothers for generating test data._
 
 ---
 
-## 3. Naming Conventions
+## 3. General Testing Philosophy
 
-| Element            | Convention                |
-| ------------------ | ------------------------- |
-| Package            | `<entity>mother`          |
-| Default factory    | `Default<Entity>()`       |
-| Builder            | `New<Entity>(options...)` |
-| Options            | `With<Field>()`           |
-| Collection builder | `New<Entity>List(amount)` |
-
-**Examples:**
-
-* Package: `photomother`
-* Default factory: `DefaultPhoto()`
-* Builder: `NewPhoto()`
-* Option: `WithID()`, `WithTitle()`
-* List: `NewPhotoList(10)`
+- **Isolation:** Tests should isolate the unit under test, using mocks or fakes for dependencies.
+- **Readability:** Tests must be easy to read and understand.
+- **Repeatability:** Tests must be deterministic and produce the same result every run.
+- **Maintainability:** Use helpers and patterns to avoid duplication and ease future changes.
+- **Verification:** Always verify that mocks are called as expected and that all assertions are meaningful.
 
 ---
 
-## 4. Implementation Rules
+## 4. Test File Organization
 
-### Default Factory
-
-```go
-func DefaultPhoto() *photo.Photo {
-	return photo.FromPrimitives(photo.PhotoPrimitives{
-		ID:     gofakeit.UUID(),
-		Title:  gofakeit.Sentence(3),
-		URL:    gofakeit.URL(),
-		Recipe: recipemother.DefaultRecipePrimitives(),
-	})
-}
-```
-
-* Must always return a valid object.
-* May use realistic fake data.
-* May depend on other Object Mothers in the same context.
-
-### Functional Options
-
-```go
-type PhotoOption func(photo.PhotoPrimitives) photo.PhotoPrimitives
-```
-
-Each option modifies **only one field**:
-
-```go
-func WithID(id string) PhotoOption {
-	return func(p photo.PhotoPrimitives) photo.PhotoPrimitives {
-		p.ID = id
-		return p
-	}
-}
-```
-
-### Builder Function
-
-```go
-func NewPhoto(options ...PhotoOption) *photo.Photo {
-	primitives := DefaultPhoto().ToPrimitives()
-	for _, opt := range options {
-		primitives = opt(primitives)
-	}
-	return photo.FromPrimitives(primitives)
-}
-```
-
-* Start from `Default<Entity>()`.
-* Apply options sequentially.
-* Return a real domain entity.
-
-### List Builder
-
-```go
-func NewPhotoList(amount int) []*photo.Photo {
-	photos := make([]*photo.Photo, amount)
-	for i := range amount {
-		photos[i] = NewPhoto()
-	}
-	return photos
-}
-```
-
-* Use for pagination, bulk, or collection-based tests.
+- Place tests next to the code they test (e.g., handler tests next to handler implementations).
+- Place reusable mocks and Object Mothers in dedicated `/test` folders within each context.
+- Never import test helpers or Object Mothers into production code.
 
 ---
 
-## 5. How to Use in Tests
+## 5. How to Get Started
 
-### Simple test
+1. **Read the [Handler Testing Standard](./handler_testing_standard.md)**  
+   Learn how to structure handler tests, use helpers, and enforce mock verification.
 
-```go
-photo := photomother.DefaultPhoto()
-```
+2. **Read the [Object Mother Testing Standard](./object_mother_testing.md)**  
+   Understand how to create and use Object Mothers for generating valid, customizable test data.
 
-### Override fields
-
-```go
-photo := photomother.NewPhoto(
-	photomother.WithID("photo-1"),
-	photomother.WithTitle("My Photo"),
-)
-```
-
-### Deterministic assertions
-
-```go
-photo := photomother.NewPhoto(
-	photomother.WithID("fixed-id"),
-)
-```
+3. **Follow the checklist in each standard**  
+   Each standard includes a checklist to ensure your tests meet project requirements.
 
 ---
 
-## 6. What NOT to Do
+## 6. For AI Contributors
 
-* ❌ Place Object Mothers in production packages.
-* ❌ Return invalid objects in defaults.
-* ❌ Create multiple specialized constructors.
-* ❌ Share Object Mothers across unrelated contexts.
-* ❌ Use hidden random values for fields under test assertion.
+- Always follow the referenced standards.
+- Use existing helpers and Object Mothers—never invent ad-hoc patterns.
+- Ensure all generated tests are readable, maintainable, and pass the checklists in the standards.
 
 ---
 
-## 7. Duplication vs Reuse
+## 7. Updating the Standards
 
-* Duplication in tests is **acceptable** when:
-
-  * Contexts are independent
-  * Domain meaning diverges
-  * Readability is reduced by reuse
-* Prefer local duplication over coupling contexts.
+If you find gaps or improvements, propose changes via pull request. All changes must be reviewed for clarity, enforceability, and compatibility with both human and AI workflows.
 
 ---
 
-## 8. AI Guidelines
-
-AI tools generating tests **must**:
-
-* Use existing Object Mothers
-* Follow naming conventions
-* Prefer `New<Entity>(WithX())` over inline construction
-* Never bypass domain invariants
-* Never create ad-hoc test objects in tests
-
----
-
-## 9. Summary Checklist
-
-* [ ] Object Mother lives in `_test.go` or `/test` folder
-* [ ] Defaults return fully valid objects
-* [ ] Functional options allow field overrides
-* [ ] Collections builders are available for bulk tests
-* [ ] Tests are readable and deterministic where needed
-* [ ] Production code never imports Object Mothers
-* [ ] Duplication is acceptable between independent contexts
-
-> Following these rules ensures maintainable, clear, and AI-friendly tests in all contexts of the project.
-
-```
-```
+**By following these standards, we ensure our tests are reliable, maintainable, and easy for anyone (or anything) to extend.**
