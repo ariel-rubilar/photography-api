@@ -67,7 +67,7 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 
 		photos := photomother.NewPhotoList(0)
 
-		providers.Repo.On("Search", mock.Anything).Return(photos, nil)
+		providers.Repo.On("Search", mock.Anything).Return(photos, nil).Once()
 
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
@@ -93,7 +93,7 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 		router := preparePhotoHandlerWithProviders(providers)
 		photos := photomother.NewPhotoList(2)
 
-		providers.Repo.On("Search", mock.Anything).Return(photos, nil)
+		providers.Repo.On("Search", mock.Anything).Return(photos, nil).Once()
 
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
@@ -152,7 +152,7 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 
 		providers.Repo.On("Search", mock.Anything).Return([]*photo.Photo{}, domainerror.Validation{
 			Reason: "TEST",
-		})
+		}).Once()
 
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
