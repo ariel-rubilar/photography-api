@@ -32,5 +32,5 @@ func (p *PhotoViewProjector) Handle(ctx context.Context, event event.Event) erro
 		return fmt.Errorf("invalid event type: %s", event.Type())
 	}
 
-	return p.saver.Save(ctx, e.PhotoID(), e.RecipeID())
+	return p.saver.Execute(ctx, e.PhotoID(), e.RecipeID())
 }

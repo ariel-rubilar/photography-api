@@ -24,7 +24,7 @@ func New(photoReader photoread.Repository,
 	}
 }
 
-func (s *saver) Save(ctx context.Context, photoID string, recipeID string) error {
+func (s *saver) Execute(ctx context.Context, photoID string, recipeID string) error {
 
 	photo, err := s.photoReader.Get(ctx, photoID)
 	if err != nil {
