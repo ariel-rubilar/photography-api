@@ -46,6 +46,7 @@ These instructions are tailored for AI assistants and contributors working on th
   - Write unit tests for domain logic.
   - Use mocks/fakes for infrastructure in tests.
   - Cover use cases with application-level tests.
+  - **Always consult and follow the [main testing documentation](./docs/testing.md) and referenced standards for handler and object mother testing.**
 - **Documentation:** 
   - Document the purpose and usage of each package, interface, and complex function.
   - Add comments for non-obvious business logic or architectural decisions.
@@ -67,4 +68,4 @@ These instructions are tailored for AI assistants and contributors working on th
 
 ---
 
-*For any new feature or refactor, always reference the structure and patterns in [`/internal`](./internal) and [`/docs/testing.md`](./docs/testing.md) to ensure architectural consistency.*
+*For any new feature or refactor, always reference the structure and patterns in [`/internal`](./internal), the [main testing documentation](./docs/testing.md) (which links to handler and object mother standards), and the [`/docs`](./docs) folder for any additional or future documentation. When in doubt, consult the docs to improve your responses and code suggestions.*
