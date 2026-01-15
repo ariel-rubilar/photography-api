@@ -22,90 +22,29 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
 
-func TestHandler_Success_Response(t *testing.T) {
+type Providers struct {
+	Repo *mocks.MockPhotoRepository
+}
 
-	gin.SetMode(gin.TestMode)
-	photos := photomother.NewPhotoList(2)
+func prepareMockWithAutoAssert(t *testing.T) Providers {
+	mockRepo := new(mocks.MockPhotoRepository)
 
-	r := new(mocks.MockPhotoRepository)
+	t.Cleanup(func() {
+		mockRepo.AssertExpectations(t)
+	})
 
-	r.On("Search", mock.Anything).Return(photos, nil)
-
-	uc := searcher.New(r)
-	h := searchphotos.NewHandler(uc)
-
-	router := gin.New()
-
-	logger := sharedmocks.NewNoOpLogger()
-
-	router.Use(
-		middleware.ErrorHandler(logger),
-	)
-
-	router.GET("/test", h)
-
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/test", nil)
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, 200, w.Code)
-
-	var resp struct {
-		Data []searchphotos.PhotoDTO `json:"data"`
-	}
-	err := json.Unmarshal(w.Body.Bytes(), &resp)
-	require.NoError(t, err)
-
-	assert.Len(t, resp.Data, 2)
-
-	for i, photo := range photos {
-		actual := resp.Data[i]
-
-		primitives := photo.ToPrimitives()
-
-		expected := searchphotos.PhotoDTO{
-			ID:    primitives.ID,
-			Title: primitives.Title,
-			URL:   primitives.URL,
-			Recipe: searchphotos.PhotoRecipe{
-				Name: primitives.Recipe.Name,
-				Settings: searchphotos.PhotoRecipeSettings{
-					FilmSimulation:       primitives.Recipe.Settings.FilmSimulation,
-					DynamicRange:         primitives.Recipe.Settings.DynamicRange,
-					Highlight:            primitives.Recipe.Settings.Highlight,
-					Shadow:               primitives.Recipe.Settings.Shadow,
-					Color:                primitives.Recipe.Settings.Color,
-					NoiseReduction:       primitives.Recipe.Settings.NoiseReduction,
-					Sharpening:           primitives.Recipe.Settings.Sharpening,
-					Clarity:              primitives.Recipe.Settings.Clarity,
-					GrainEffect:          primitives.Recipe.Settings.GrainEffect,
-					ColorChromeEffect:    primitives.Recipe.Settings.ColorChromeEffect,
-					ColorChromeBlue:      primitives.Recipe.Settings.ColorChromeBlue,
-					WhiteBalance:         primitives.Recipe.Settings.WhiteBalance,
-					Iso:                  primitives.Recipe.Settings.Iso,
-					ExposureCompensation: primitives.Recipe.Settings.ExposureCompensation,
-				},
-				Link: primitives.Recipe.Link,
-			},
-		}
-		assert.Equal(t, expected, actual)
+	return Providers{
+		Repo: mockRepo,
 	}
 }
 
-func TestHandler_Error_Response(t *testing.T) {
-
+func preparePhotoHandlerWithProviders(providers Providers) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 
-	r := new(mocks.MockPhotoRepository)
-
-	r.On("Search", mock.Anything).Return([]*photo.Photo{}, domainerror.Validation{
-		Reason: "TEST",
-	})
-
-	uc := searcher.New(r)
-	h := searchphotos.NewHandler(uc)
-
 	router := gin.New()
+
+	uc := searcher.New(providers.Repo)
+	h := searchphotos.NewHandler(uc)
 
 	logger := sharedmocks.NewNoOpLogger()
 
@@ -113,19 +52,121 @@ func TestHandler_Error_Response(t *testing.T) {
 		middleware.ErrorHandler(logger),
 	)
 
-	router.GET("/test", h)
+	router.GET("/photos", h)
+	return router
+}
 
-	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/test", nil)
-	router.ServeHTTP(w, req)
+func TestPhotoHandler_SearchPhotos(t *testing.T) {
+	t.Parallel()
 
-	assert.Equal(t, 500, w.Code)
+	t.Run("Success with empty data", func(t *testing.T) {
 
-	var resp sharedhttp.ErrorResponse
-	err := json.Unmarshal(w.Body.Bytes(), &resp)
-	require.NoError(t, err)
+		providers := prepareMockWithAutoAssert(t)
 
-	assert.Equal(t, "VALIDATION_ERROR", resp.Error.Code)
-	assert.Equal(t, "TEST", resp.Error.Message)
+		router := preparePhotoHandlerWithProviders(providers)
 
+		photos := photomother.NewPhotoList(0)
+
+		providers.Repo.On("Search", mock.Anything).Return(photos, nil)
+
+		w := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/photos", nil)
+		require.NoError(t, err)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, 200, w.Code)
+
+		var resp struct {
+			Data []searchphotos.PhotoDTO `json:"data"`
+		}
+		err = json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+
+		assert.Len(t, resp.Data, 0)
+
+	})
+
+	t.Run("Success with data", func(t *testing.T) {
+
+		providers := prepareMockWithAutoAssert(t)
+
+		router := preparePhotoHandlerWithProviders(providers)
+		photos := photomother.NewPhotoList(2)
+
+		providers.Repo.On("Search", mock.Anything).Return(photos, nil)
+
+		w := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/photos", nil)
+		require.NoError(t, err)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, 200, w.Code)
+
+		var resp struct {
+			Data []searchphotos.PhotoDTO `json:"data"`
+		}
+		err = json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+
+		assert.Len(t, resp.Data, 2)
+
+		for i, photo := range photos {
+			actual := resp.Data[i]
+
+			primitives := photo.ToPrimitives()
+
+			expected := searchphotos.PhotoDTO{
+				ID:    primitives.ID,
+				Title: primitives.Title,
+				URL:   primitives.URL,
+				Recipe: searchphotos.PhotoRecipe{
+					Name: primitives.Recipe.Name,
+					Settings: searchphotos.PhotoRecipeSettings{
+						FilmSimulation:       primitives.Recipe.Settings.FilmSimulation,
+						DynamicRange:         primitives.Recipe.Settings.DynamicRange,
+						Highlight:            primitives.Recipe.Settings.Highlight,
+						Shadow:               primitives.Recipe.Settings.Shadow,
+						Color:                primitives.Recipe.Settings.Color,
+						NoiseReduction:       primitives.Recipe.Settings.NoiseReduction,
+						Sharpening:           primitives.Recipe.Settings.Sharpening,
+						Clarity:              primitives.Recipe.Settings.Clarity,
+						GrainEffect:          primitives.Recipe.Settings.GrainEffect,
+						ColorChromeEffect:    primitives.Recipe.Settings.ColorChromeEffect,
+						ColorChromeBlue:      primitives.Recipe.Settings.ColorChromeBlue,
+						WhiteBalance:         primitives.Recipe.Settings.WhiteBalance,
+						Iso:                  primitives.Recipe.Settings.Iso,
+						ExposureCompensation: primitives.Recipe.Settings.ExposureCompensation,
+					},
+					Link: primitives.Recipe.Link,
+				},
+			}
+			assert.Equal(t, expected, actual)
+		}
+	})
+
+	t.Run("Error searching photos", func(t *testing.T) {
+
+		providers := prepareMockWithAutoAssert(t)
+
+		router := preparePhotoHandlerWithProviders(providers)
+
+		providers.Repo.On("Search", mock.Anything).Return([]*photo.Photo{}, domainerror.Validation{
+			Reason: "TEST",
+		})
+
+		w := httptest.NewRecorder()
+		req, err := http.NewRequest("GET", "/photos", nil)
+		require.NoError(t, err)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, 500, w.Code)
+
+		var resp sharedhttp.ErrorResponse
+		err = json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+
+		assert.Equal(t, "VALIDATION_ERROR", resp.Error.Code)
+		assert.Equal(t, "TEST", resp.Error.Message)
+
+	})
 }
