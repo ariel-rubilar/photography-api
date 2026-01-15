@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	domainerror "github.com/ariel-rubilar/photography-api/internal/shared/domain/error"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
@@ -35,6 +35,13 @@ func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 
 			if errors.As(err, &conflictError) {
 				c.Error(httperror.Wrap(conflictError, http.StatusConflict))
+				return
+			}
+
+			var notFoundError domainerror.NotFound
+
+			if errors.As(err, &notFoundError) {
+				c.Error(httperror.Wrap(notFoundError, http.StatusNotFound))
 				return
 			}
 

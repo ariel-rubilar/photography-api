@@ -26,7 +26,7 @@ func setupBackoffice(mongoClient *mongo.Client, bus event.Bus) *backofficeProvid
 
 	recipeSaverUseCase := recipesaver.New(recipeRepository)
 
-	photoSaverUseCase := photosaver.New(photoRepository, bus)
+	photoSaverUseCase := photosaver.New(photoRepository, recipeRepository, bus)
 
 	return &backofficeProviders{
 		RecipeSearcher: recipeSearcherUseCase,

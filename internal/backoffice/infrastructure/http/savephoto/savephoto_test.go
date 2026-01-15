@@ -19,7 +19,6 @@ import (
 	sharedmocks "github.com/ariel-rubilar/photography-api/test/mocks"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
-	domainerror "github.com/ariel-rubilar/photography-api/internal/shared/domain/error"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -27,22 +26,26 @@ import (
 )
 
 type Providers struct {
-	Repo     *mocks.MockPhotoRepository
-	EventBus *sharedmocks.MockEventBus
+	Repo       *mocks.MockPhotoRepository
+	EventBus   *sharedmocks.MockEventBus
+	RecipeRepo *mocks.MockRecipeRepository
 }
 
 func prepareMockWithAutoAssert(t *testing.T) Providers {
 	mockRepo := new(mocks.MockPhotoRepository)
 	mockEventBus := new(sharedmocks.MockEventBus)
+	mockRecipeRepo := new(mocks.MockRecipeRepository)
 
 	t.Cleanup(func() {
 		mockRepo.AssertExpectations(t)
 		mockEventBus.AssertExpectations(t)
+		mockRecipeRepo.AssertExpectations(t)
 	})
 
 	return Providers{
-		Repo:     mockRepo,
-		EventBus: mockEventBus,
+		Repo:       mockRepo,
+		EventBus:   mockEventBus,
+		RecipeRepo: mockRecipeRepo,
 	}
 }
 
@@ -50,7 +53,7 @@ func prepareSavePhotoHandlerWithProviders(providers Providers) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	router := gin.New()
 
-	uc := photosaver.New(providers.Repo, providers.EventBus)
+	uc := photosaver.New(providers.Repo, providers.RecipeRepo, providers.EventBus)
 	h := savephoto.NewHandler(uc)
 
 	logger := sharedmocks.NewNoOpLogger()
@@ -124,6 +127,8 @@ func TestSavePhotoHandler(t *testing.T) {
 			return true
 		})).Return(nil).Once()
 
+		providers.RecipeRepo.On("Exists", req.Context(), primitives.RecipeID).Return(true, nil).Once()
+
 		w := httptest.NewRecorder()
 		router.ServeHTTP(w, req)
 
@@ -158,6 +163,7 @@ func TestSavePhotoHandler(t *testing.T) {
 		req, err := http.NewRequest("POST", "/photos", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
 		require.NoError(t, err)
+		providers.RecipeRepo.On("Exists", req.Context(), primitives.RecipeID).Return(true, nil).Once()
 
 		providers.Repo.On("Search",
 			req.Context(),
@@ -178,9 +184,7 @@ func TestSavePhotoHandler(t *testing.T) {
 				require.Equal(t, expectedPhoto.ToPrimitives(), actual.ToPrimitives())
 				return true
 			}),
-		).Return(domainerror.Conflict{
-			Reason: "photo already exists",
-		}).Once()
+		).Return(errors.New("photo already exists")).Once()
 
 		w := httptest.NewRecorder()
 
@@ -192,8 +196,8 @@ func TestSavePhotoHandler(t *testing.T) {
 		err = json.Unmarshal(w.Body.Bytes(), &response)
 		require.NoError(t, err)
 
-		assert.Equal(t, "CONFLICT", response.Error.Code)
-		assert.Equal(t, "photo already exists", response.Error.Message)
+		assert.Equal(t, "INTERNAL_ERROR", response.Error.Code)
+		assert.Equal(t, "internal server error", response.Error.Message)
 	})
 
 	t.Run("photo already exists", func(t *testing.T) {
@@ -233,7 +237,7 @@ func TestSavePhotoHandler(t *testing.T) {
 
 		router.ServeHTTP(w, req)
 
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
+		assert.Equal(t, http.StatusConflict, w.Code)
 
 		var response sharedhttp.ErrorResponse
 		err = json.Unmarshal(w.Body.Bytes(), &response)
@@ -241,6 +245,54 @@ func TestSavePhotoHandler(t *testing.T) {
 
 		assert.Equal(t, "CONFLICT", response.Error.Code)
 		assert.Equal(t, fmt.Sprintf("%s already exists", expectedPhoto.ToPrimitives().ID), response.Error.Message)
+	})
+
+	t.Run("recipe not found", func(t *testing.T) {
+		providers := prepareMockWithAutoAssert(t)
+		router := prepareSavePhotoHandlerWithProviders(providers)
+
+		expectedPhoto := photomother.NewPhoto()
+		primitives := expectedPhoto.ToPrimitives()
+
+		dto := &savephoto.PhotoDTO{
+			Title:    primitives.Title,
+			ID:       primitives.ID,
+			URL:      primitives.URL,
+			RecipeID: primitives.RecipeID,
+		}
+
+		body, err := json.Marshal(dto)
+
+		req, err := http.NewRequest("POST", "/photos", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		require.NoError(t, err)
+
+		providers.Repo.On("Search",
+			req.Context(),
+			photo.Criteria{
+				Filters: photo.Filters{
+					{
+						Field: photo.FieldID,
+						Op:    photo.OpEq,
+						Value: expectedPhoto.ToPrimitives().ID,
+					},
+				},
+			},
+		).Return([]*photo.Photo{}, nil).Once()
+
+		providers.RecipeRepo.On("Exists", req.Context(), primitives.RecipeID).Return(false, nil).Once()
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+
+		var response sharedhttp.ErrorResponse
+		err = json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, err)
+
+		assert.Equal(t, "NOT_FOUND", response.Error.Code)
+		assert.Equal(t, "recipe not found", response.Error.Message)
 	})
 
 	t.Run("error publish event", func(t *testing.T) {
@@ -262,6 +314,7 @@ func TestSavePhotoHandler(t *testing.T) {
 		req, err := http.NewRequest("POST", "/photos", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
 		require.NoError(t, err)
+		providers.RecipeRepo.On("Exists", req.Context(), primitives.RecipeID).Return(true, nil).Once()
 
 		providers.Repo.On("Save",
 			req.Context(),

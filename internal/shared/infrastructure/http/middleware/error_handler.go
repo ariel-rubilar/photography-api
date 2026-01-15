@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	domainerror "github.com/ariel-rubilar/photography-api/internal/shared/domain/error"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/httperror"
 	"github.com/gin-gonic/gin"

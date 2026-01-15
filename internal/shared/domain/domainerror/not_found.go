@@ -1,4 +1,4 @@
-package error
+package domainerror
 
 type NotFound struct {
 	Entity string

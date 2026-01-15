@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	domainerror "github.com/ariel-rubilar/photography-api/internal/shared/domain/error"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	"github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http/searchphotos"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )

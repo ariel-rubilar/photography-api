@@ -5,19 +5,21 @@ import (
 	"fmt"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
-	domainerror "github.com/ariel-rubilar/photography-api/internal/shared/domain/error"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 )
 
 type Saver struct {
-	repo photo.Repository
-	bus  event.Bus
+	repo       photo.Repository
+	bus        event.Bus
+	recipeRepo RecipeReadRepository
 }
 
-func New(repo photo.Repository, bus event.Bus) *Saver {
+func New(repo photo.Repository, recipeRepo RecipeReadRepository, bus event.Bus) *Saver {
 	return &Saver{
-		repo: repo,
-		bus:  bus,
+		repo:       repo,
+		bus:        bus,
+		recipeRepo: recipeRepo,
 	}
 }
 
@@ -25,6 +27,18 @@ func (s *Saver) Save(ctx context.Context, id, title, url, recipeID string) error
 
 	if err := s.ensurePhotoDoNotExists(ctx, id); err != nil {
 		return err
+	}
+
+	ok, err := s.recipeRepo.Exists(ctx, recipeID)
+
+	if err != nil {
+		return err
+	}
+
+	if !ok {
+		return domainerror.NotFound{
+			Entity: "recipe",
+		}
 	}
 
 	newPhoto, err := photo.Create(id, title, url, recipeID)

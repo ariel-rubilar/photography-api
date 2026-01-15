@@ -19,7 +19,7 @@ func Wrap(err error, statusCode int, options ...Options) Error {
 
 	e := Error{
 		Err:        err,
-		StatusCode: http.StatusInternalServerError,
+		StatusCode: statusCode,
 		Message:    "internal server error",
 		Code:       "INTERNAL_ERROR",
 	}

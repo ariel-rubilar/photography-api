@@ -1,4 +1,4 @@
-package error
+package domainerror
 
 type Error interface {
 	error

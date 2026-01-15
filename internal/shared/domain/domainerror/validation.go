@@ -1,4 +1,4 @@
-package error
+package domainerror
 
 type Validation struct {
 	Reason string
