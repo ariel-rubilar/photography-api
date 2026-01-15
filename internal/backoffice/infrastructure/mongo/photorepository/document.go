@@ -12,6 +12,18 @@ type photoDocument struct {
 	RecipeID string        `bson:"recipeId"`
 }
 
+func (p *photoDocument) ToDomain() (*photo.Photo, error) {
+
+	primitives := photo.PhotoPrimitives{
+		ID:       p.ID.Hex(),
+		Title:    p.Title,
+		URL:      p.URL,
+		RecipeID: p.RecipeID,
+	}
+
+	return photo.FromPrimitives(primitives)
+}
+
 func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {
 	primitives := r.ToPrimitives()
 	id, err := bson.ObjectIDFromHex(primitives.ID)

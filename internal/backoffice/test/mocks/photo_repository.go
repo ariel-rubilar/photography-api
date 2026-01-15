@@ -17,3 +17,8 @@ func (m *MockPhotoRepository) Save(ctx context.Context, p *photo.Photo) error {
 	args := m.Called(ctx, p)
 	return args.Error(0)
 }
+
+func (m *MockPhotoRepository) Search(ctx context.Context, criteria photo.Criteria) ([]*photo.Photo, error) {
+	args := m.Called(ctx, criteria)
+	return args.Get(0).([]*photo.Photo), args.Error(1)
+}
