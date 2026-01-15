@@ -9,10 +9,12 @@ import (
 
 	"go.uber.org/zap"
 
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/r2"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/httpgin"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/imbus"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/mongo"
+	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/realclock"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/server"
 )
 
@@ -44,15 +46,30 @@ func Run(cfg env.Config, logger *zap.Logger) error {
 
 	webProviders := setupWeb(mongoClient)
 
-	backofficeProviders := setupBackoffice(mongoClient, bus)
+	realClock := realclock.RealClock{}
+
+	r2Client, err := r2.NewClient(r2.Config{
+		AccessKeyID:     cfg.R2.AccessKeyID,
+		SecretAccessKey: cfg.R2.SecretAccessKey,
+		AccountID:       cfg.R2.AccountID,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	urlSigner := r2.NewSigner(cfg.R2.BucketName, r2Client)
+
+	backofficeProviders := setupBackoffice(mongoClient, urlSigner, realClock, bus)
 
 	providers := &httpgin.Providers{
-		PhotoSearcher:  webProviders.PhotoSearcher,
-		RecipeSearcher: backofficeProviders.RecipeSearcher,
-		RecipeSaver:    backofficeProviders.RecipeSaver,
-		PhotoSaver:     backofficeProviders.PhotoSaver,
-		DB:             mongoClient,
-		Logger:         logger,
+		PhotoSearcher:   webProviders.PhotoSearcher,
+		RecipeSearcher:  backofficeProviders.RecipeSearcher,
+		RecipeSaver:     backofficeProviders.RecipeSaver,
+		PhotoSaver:      backofficeProviders.PhotoSaver,
+		DB:              mongoClient,
+		Logger:          logger,
+		UploadURLGetter: *backofficeProviders.UploadURLGetter,
 	}
 
 	handler := httpgin.NewGinEngine(httpgin.Config{

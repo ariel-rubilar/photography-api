@@ -5,6 +5,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/uploadurlgetter"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/env"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/handler"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/health"
@@ -18,12 +19,13 @@ import (
 )
 
 type Providers struct {
-	RecipeSearcher *recipesearcher.Searcher
-	RecipeSaver    *recipesaver.Saver
-	PhotoSaver     *photosaver.Saver
-	PhotoSearcher  *searcher.Searcher
-	DB             *mongo.Client
-	Logger         *zap.Logger
+	RecipeSearcher  *recipesearcher.Searcher
+	RecipeSaver     *recipesaver.Saver
+	PhotoSaver      *photosaver.Saver
+	PhotoSearcher   *searcher.Searcher
+	DB              *mongo.Client
+	Logger          *zap.Logger
+	UploadURLGetter uploadurlgetter.Getter
 }
 
 type Config struct {
@@ -65,9 +67,10 @@ func registerRoutes(r *gin.Engine, providers *Providers) {
 	backofficeGroup := apiVersionGroup.Group("/backoffice")
 
 	backofficehttp.RegisterRoutes(backofficeGroup, &backofficehttp.Providers{
-		RecipeSearcher: providers.RecipeSearcher,
-		RecipeSaver:    providers.RecipeSaver,
-		PhotoSaver:     providers.PhotoSaver,
+		RecipeSearcher:  providers.RecipeSearcher,
+		RecipeSaver:     providers.RecipeSaver,
+		PhotoSaver:      providers.PhotoSaver,
+		UploadURLGetter: &providers.UploadURLGetter,
 	})
 
 	webGroup := apiVersionGroup.Group("/web")

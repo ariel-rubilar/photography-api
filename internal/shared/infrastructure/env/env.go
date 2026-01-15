@@ -17,6 +17,14 @@ const (
 type Config struct {
 	MongoURI  string
 	ServerEnv Env
+	R2        R2Config
+}
+
+type R2Config struct {
+	AccessKeyID     string
+	SecretAccessKey string
+	AccountID       string
+	BucketName      string
 }
 
 func LoadConfig() (*Config, error) {
@@ -39,9 +47,17 @@ func LoadConfig() (*Config, error) {
 		serverEnv = Development
 	}
 
+	r2Config := R2Config{
+		AccessKeyID:     os.Getenv("R2_ACCESS_KEY_ID"),
+		SecretAccessKey: os.Getenv("R2_SECRET_ACCESS_KEY"),
+		AccountID:       os.Getenv("R2_ACCOUNT_ID"),
+		BucketName:      os.Getenv("R2_BUCKET_NAME"),
+	}
+
 	return &Config{
 		MongoURI:  uri,
 		ServerEnv: serverEnv,
+		R2:        r2Config,
 	}, nil
 
 }

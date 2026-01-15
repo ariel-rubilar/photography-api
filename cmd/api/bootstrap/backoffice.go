@@ -3,20 +3,29 @@ package bootstrap
 import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/mongo/reciperepository"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/r2"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesaver"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/uploadurlgetter"
+	"github.com/ariel-rubilar/photography-api/internal/shared/aplication/clock"
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type backofficeProviders struct {
-	RecipeSearcher *recipesearcher.Searcher
-	RecipeSaver    *recipesaver.Saver
-	PhotoSaver     *photosaver.Saver
+	RecipeSearcher  *recipesearcher.Searcher
+	RecipeSaver     *recipesaver.Saver
+	PhotoSaver      *photosaver.Saver
+	UploadURLGetter *uploadurlgetter.Getter
 }
 
-func setupBackoffice(mongoClient *mongo.Client, bus event.Bus) *backofficeProviders {
+func setupBackoffice(
+	mongoClient *mongo.Client,
+	signer *r2.Signer,
+	clock clock.Clock,
+	bus event.Bus,
+) *backofficeProviders {
 
 	photoRepository := photorepository.NewMongoRepository(mongoClient)
 
@@ -28,9 +37,12 @@ func setupBackoffice(mongoClient *mongo.Client, bus event.Bus) *backofficeProvid
 
 	photoSaverUseCase := photosaver.New(photoRepository, recipeRepository, bus)
 
+	uploadURLGetterUseCase := uploadurlgetter.New(signer, clock)
+
 	return &backofficeProviders{
-		RecipeSearcher: recipeSearcherUseCase,
-		RecipeSaver:    recipeSaverUseCase,
-		PhotoSaver:     photoSaverUseCase,
+		RecipeSearcher:  recipeSearcherUseCase,
+		RecipeSaver:     recipeSaverUseCase,
+		PhotoSaver:      photoSaverUseCase,
+		UploadURLGetter: uploadURLGetterUseCase,
 	}
 }
