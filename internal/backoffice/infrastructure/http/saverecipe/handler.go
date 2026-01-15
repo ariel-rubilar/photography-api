@@ -29,7 +29,7 @@ func NewHandler(searcher *recipesaver.Saver) gin.HandlerFunc {
 			return
 		}
 
-		err = searcher.Save(c.Request.Context(), recipe)
+		err = searcher.Execute(c.Request.Context(), recipe)
 
 		if err != nil {
 			c.Error(httperror.WrapInternalServerError(err))

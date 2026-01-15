@@ -17,7 +17,7 @@ func New(repo recipe.Repository) *Saver {
 	}
 }
 
-func (s *Saver) Save(ctx context.Context, new *recipe.Recipe) error {
+func (s *Saver) Execute(ctx context.Context, new *recipe.Recipe) error {
 
 	recipes, err := s.repo.Search(ctx, recipe.Criteria{
 		Filters: recipe.Filters{
