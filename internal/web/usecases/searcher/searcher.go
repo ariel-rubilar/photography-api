@@ -16,6 +16,6 @@ func New(repo photo.Repository) *Searcher {
 	}
 }
 
-func (s *Searcher) Search(ctx context.Context) ([]*photo.Photo, error) {
+func (s *Searcher) Execute(ctx context.Context) ([]*photo.Photo, error) {
 	return s.repo.Search(ctx)
 }

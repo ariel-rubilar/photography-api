@@ -13,7 +13,7 @@ import (
 func NewHandler(searcher *searcher.Searcher) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		photos, err := searcher.Search(c.Request.Context())
+		photos, err := searcher.Execute(c.Request.Context())
 
 		if err != nil {
 			c.Error(httperror.WrapInternalServerError(err))
