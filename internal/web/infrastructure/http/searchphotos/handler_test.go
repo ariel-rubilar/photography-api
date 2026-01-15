@@ -1,7 +1,6 @@
 package searchphotos_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -10,10 +9,12 @@ import (
 	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	"github.com/ariel-rubilar/photography-api/internal/web/photo"
+	"github.com/ariel-rubilar/photography-api/internal/web/test/mocks"
 	"github.com/ariel-rubilar/photography-api/internal/web/test/photomother"
-	"github.com/ariel-rubilar/photography-api/test/mocks"
+	sharedmocks "github.com/ariel-rubilar/photography-api/test/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	domainerror "github.com/ariel-rubilar/photography-api/internal/shared/domain/error"
@@ -21,33 +22,21 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
 
-type mockRepository struct {
-	Data *[]*photo.Photo
-	Err  error
-}
-
-func (m *mockRepository) Search(ctx context.Context) ([]*photo.Photo, error) {
-	if m.Err != nil {
-		return []*photo.Photo{}, m.Err
-	}
-	return *m.Data, nil
-}
-
 func TestHandler_Success_Response(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 	photos := photomother.NewPhotoList(2)
 
-	var r photo.Repository = &mockRepository{
-		Data: &photos,
-	}
+	r := new(mocks.MockPhotoRepository)
+
+	r.On("Search", mock.Anything).Return(photos, nil)
 
 	uc := searcher.New(r)
 	h := searchphotos.NewHandler(uc)
 
 	router := gin.New()
 
-	logger := mocks.NewNoOpLogger()
+	logger := sharedmocks.NewNoOpLogger()
 
 	router.Use(
 		middleware.ErrorHandler(logger),
@@ -107,18 +96,18 @@ func TestHandler_Error_Response(t *testing.T) {
 
 	gin.SetMode(gin.TestMode)
 
-	var r photo.Repository = &mockRepository{
-		Err: domainerror.Validation{
-			Reason: "TEST",
-		},
-	}
+	r := new(mocks.MockPhotoRepository)
+
+	r.On("Search", mock.Anything).Return([]*photo.Photo{}, domainerror.Validation{
+		Reason: "TEST",
+	})
 
 	uc := searcher.New(r)
 	h := searchphotos.NewHandler(uc)
 
 	router := gin.New()
 
-	logger := mocks.NewNoOpLogger()
+	logger := sharedmocks.NewNoOpLogger()
 
 	router.Use(
 		middleware.ErrorHandler(logger),
