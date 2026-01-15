@@ -10,8 +10,14 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/uploadurlgetter"
 	"github.com/ariel-rubilar/photography-api/internal/shared/aplication/clock"
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
+
+type Config struct {
+	PublicBaseURL string
+	BucketName    string
+}
 
 type backofficeProviders struct {
 	RecipeSearcher  *recipesearcher.Searcher
@@ -21,8 +27,9 @@ type backofficeProviders struct {
 }
 
 func setupBackoffice(
+	cfg Config,
 	mongoClient *mongo.Client,
-	signer *r2.Signer,
+	r2Client *s3.PresignClient,
 	clock clock.Clock,
 	bus event.Bus,
 ) *backofficeProviders {
@@ -37,7 +44,9 @@ func setupBackoffice(
 
 	photoSaverUseCase := photosaver.New(photoRepository, recipeRepository, bus)
 
-	uploadURLGetterUseCase := uploadurlgetter.New(signer, clock)
+	urlSigner := r2.NewSigner(cfg.BucketName, r2Client)
+
+	uploadURLGetterUseCase := uploadurlgetter.New(cfg.PublicBaseURL, urlSigner, clock)
 
 	return &backofficeProviders{
 		RecipeSearcher:  recipeSearcherUseCase,

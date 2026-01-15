@@ -58,9 +58,10 @@ func Run(cfg env.Config, logger *zap.Logger) error {
 		return err
 	}
 
-	urlSigner := r2.NewSigner(cfg.R2.BucketName, r2Client)
-
-	backofficeProviders := setupBackoffice(mongoClient, urlSigner, realClock, bus)
+	backofficeProviders := setupBackoffice(Config{
+		PublicBaseURL: cfg.R2.PublicBaseURL,
+		BucketName:    cfg.R2.BucketName,
+	}, mongoClient, r2Client, realClock, bus)
 
 	providers := &httpgin.Providers{
 		PhotoSearcher:   webProviders.PhotoSearcher,

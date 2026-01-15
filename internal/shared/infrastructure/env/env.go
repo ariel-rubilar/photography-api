@@ -25,6 +25,7 @@ type R2Config struct {
 	SecretAccessKey string
 	AccountID       string
 	BucketName      string
+	PublicBaseURL   string
 }
 
 func LoadConfig() (*Config, error) {
@@ -52,6 +53,7 @@ func LoadConfig() (*Config, error) {
 		SecretAccessKey: os.Getenv("R2_SECRET_ACCESS_KEY"),
 		AccountID:       os.Getenv("R2_ACCOUNT_ID"),
 		BucketName:      os.Getenv("R2_BUCKET_NAME"),
+		PublicBaseURL:   os.Getenv("R2_PUBLIC_BASE_URL"),
 	}
 
 	return &Config{

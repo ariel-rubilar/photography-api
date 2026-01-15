@@ -10,14 +10,16 @@ import (
 )
 
 type Getter struct {
-	signer UploadURLSigner
-	clock  clock.Clock
+	signer        UploadURLSigner
+	clock         clock.Clock
+	publicBaseURL string
 }
 
-func New(signer UploadURLSigner, clock clock.Clock) *Getter {
+func New(publicBaseURL string, signer UploadURLSigner, clock clock.Clock) *Getter {
 	return &Getter{
-		signer: signer,
-		clock:  clock,
+		signer:        signer,
+		clock:         clock,
+		publicBaseURL: publicBaseURL,
 	}
 }
 
@@ -55,5 +57,6 @@ func (uc *Getter) Execute(
 	return Response{
 		UploadURL: url,
 		ObjectKey: objectKey,
+		PublicURL: uc.publicBaseURL + "/" + objectKey,
 	}, nil
 }
