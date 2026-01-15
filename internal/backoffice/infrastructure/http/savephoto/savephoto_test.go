@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -93,6 +94,19 @@ func TestSavePhotoHandler(t *testing.T) {
 			}),
 		).Return(nil).Once()
 
+		providers.Repo.On("Search",
+			req.Context(),
+			photo.Criteria{
+				Filters: photo.Filters{
+					{
+						Field: photo.FieldID,
+						Op:    photo.OpEq,
+						Value: expectedPhoto.ToPrimitives().ID,
+					},
+				},
+			},
+		).Return([]*photo.Photo{}, nil).Once()
+
 		providers.EventBus.On("Publish", req.Context(), mock.MatchedBy(func(events []event.Event) bool {
 
 			require.Len(t, events, 1)
@@ -145,6 +159,19 @@ func TestSavePhotoHandler(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 		require.NoError(t, err)
 
+		providers.Repo.On("Search",
+			req.Context(),
+			photo.Criteria{
+				Filters: photo.Filters{
+					{
+						Field: photo.FieldID,
+						Op:    photo.OpEq,
+						Value: expectedPhoto.ToPrimitives().ID,
+					},
+				},
+			},
+		).Return([]*photo.Photo{}, nil).Once()
+
 		providers.Repo.On("Save",
 			req.Context(),
 			mock.MatchedBy(func(actual *photo.Photo) bool {
@@ -167,6 +194,53 @@ func TestSavePhotoHandler(t *testing.T) {
 
 		assert.Equal(t, "CONFLICT", response.Error.Code)
 		assert.Equal(t, "photo already exists", response.Error.Message)
+	})
+
+	t.Run("photo already exists", func(t *testing.T) {
+		providers := prepareMockWithAutoAssert(t)
+		router := prepareSavePhotoHandlerWithProviders(providers)
+
+		expectedPhoto := photomother.NewPhoto()
+		primitives := expectedPhoto.ToPrimitives()
+
+		dto := &savephoto.PhotoDTO{
+			Title:    primitives.Title,
+			ID:       primitives.ID,
+			URL:      primitives.URL,
+			RecipeID: primitives.RecipeID,
+		}
+
+		body, err := json.Marshal(dto)
+
+		req, err := http.NewRequest("POST", "/photos", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		require.NoError(t, err)
+
+		providers.Repo.On("Search",
+			req.Context(),
+			photo.Criteria{
+				Filters: photo.Filters{
+					{
+						Field: photo.FieldID,
+						Op:    photo.OpEq,
+						Value: expectedPhoto.ToPrimitives().ID,
+					},
+				},
+			},
+		).Return([]*photo.Photo{expectedPhoto}, nil).Once()
+
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+
+		var response sharedhttp.ErrorResponse
+		err = json.Unmarshal(w.Body.Bytes(), &response)
+		require.NoError(t, err)
+
+		assert.Equal(t, "CONFLICT", response.Error.Code)
+		assert.Equal(t, fmt.Sprintf("%s already exists", expectedPhoto.ToPrimitives().ID), response.Error.Message)
 	})
 
 	t.Run("error publish event", func(t *testing.T) {
@@ -196,6 +270,19 @@ func TestSavePhotoHandler(t *testing.T) {
 				return true
 			}),
 		).Return(nil).Once()
+
+		providers.Repo.On("Search",
+			req.Context(),
+			photo.Criteria{
+				Filters: photo.Filters{
+					{
+						Field: photo.FieldID,
+						Op:    photo.OpEq,
+						Value: expectedPhoto.ToPrimitives().ID,
+					},
+				},
+			},
+		).Return([]*photo.Photo{}, nil).Once()
 
 		providers.EventBus.On("Publish", req.Context(), mock.MatchedBy(func(events []event.Event) bool {
 
