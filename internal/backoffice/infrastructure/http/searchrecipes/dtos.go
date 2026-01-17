@@ -4,7 +4,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
 )
 
-type settingDTO struct {
+type SettingDTO struct {
 	FilmSimulation       string `json:"filmSimulation"`
 	DynamicRange         string `json:"dynamicRange"`
 	Highlight            string `json:"highlight"`
@@ -21,26 +21,26 @@ type settingDTO struct {
 	ExposureCompensation string `json:"exposureCompensation"`
 }
 
-type recipeDTO struct {
+type RecipeDTO struct {
 	ID       string     `json:"id"`
 	Name     string     `json:"name"`
-	Settings settingDTO `json:"settings"`
+	Settings SettingDTO `json:"settings"`
 	Link     string     `json:"link"`
 }
 
-func newSearchRecipesData(recipes []*recipe.Recipe) []recipeDTO {
+func newSearchRecipesData(recipes []*recipe.Recipe) []RecipeDTO {
 
-	recipeDTOs := make([]recipeDTO, 0, len(recipes))
+	recipeDTOs := make([]RecipeDTO, 0, len(recipes))
 
 	for _, recipe := range recipes {
 
 		primitives := recipe.ToPrimitives()
 
-		recipeDTOs = append(recipeDTOs, recipeDTO{
+		recipeDTOs = append(recipeDTOs, RecipeDTO{
 			ID:   primitives.ID,
 			Link: primitives.Link,
 			Name: primitives.Name,
-			Settings: settingDTO{
+			Settings: SettingDTO{
 				FilmSimulation:       primitives.Settings.FilmSimulation,
 				DynamicRange:         primitives.Settings.DynamicRange,
 				Highlight:            primitives.Settings.Highlight,
