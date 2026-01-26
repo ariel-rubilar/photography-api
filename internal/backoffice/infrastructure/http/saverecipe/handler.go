@@ -21,15 +21,27 @@ func NewHandler(searcher *recipesaver.Saver) gin.HandlerFunc {
 			return
 		}
 
-		recipe, err := request.toDomain()
-
-		if err != nil {
-			c.Error(httperror.WrapBadRequestError(err, httperror.WithMessage("invalid recipe data")))
-
-			return
-		}
-
-		err = searcher.Execute(c.Request.Context(), recipe)
+		err := searcher.Execute(c.Request.Context(), recipesaver.SaveRecipeCommand{
+			ID:   request.ID,
+			Name: request.Name,
+			Settings: recipesaver.SaveRecipeSettingsCommand{
+				FilmSimulation:       request.Settings.FilmSimulation,
+				DynamicRange:         request.Settings.DynamicRange,
+				Highlight:            request.Settings.Highlight,
+				Shadow:               request.Settings.Shadow,
+				Color:                request.Settings.Color,
+				NoiseReduction:       request.Settings.NoiseReduction,
+				Sharpening:           request.Settings.Sharpening,
+				Clarity:              request.Settings.Clarity,
+				GrainEffect:          request.Settings.GrainEffect,
+				ColorChromeEffect:    request.Settings.ColorChromeEffect,
+				ColorChromeBlue:      request.Settings.ColorChromeBlue,
+				WhiteBalance:         request.Settings.WhiteBalance,
+				Iso:                  request.Settings.Iso,
+				ExposureCompensation: request.Settings.ExposureCompensation,
+			},
+			Link: request.Link,
+		})
 
 		if err != nil {
 			c.Error(httperror.WrapInternalServerError(err))
