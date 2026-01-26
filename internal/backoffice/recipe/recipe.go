@@ -1,5 +1,7 @@
 package recipe
 
+import "github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
+
 type RecipePrimitives struct {
 	Name     string
 	Settings RecipeSettingsPrimitives
@@ -12,6 +14,7 @@ type Recipe struct {
 	name     RecipeName
 	settings RecipeSettings
 	link     string
+	events   []event.Event
 }
 
 func new(id string, name RecipeName, settings RecipeSettings, link string) *Recipe {
@@ -30,7 +33,26 @@ func Create(id string, name string, settings RecipeSettings, link string) (*Reci
 		return nil, err
 	}
 
-	return new(id, nameVO, settings, link), nil
+	r := new(id, nameVO, settings, link)
+
+	r.recordEvent(newRecipeCreatedEvent(id, nameVO.value, link, RecipeCreatedEventSettings{
+		FilmSimulation:       settings.filmSimulation,
+		DynamicRange:         settings.dynamicRange,
+		Highlight:            settings.highlight,
+		Shadow:               settings.shadow,
+		Color:                settings.color,
+		NoiseReduction:       settings.noiseReduction,
+		Sharpening:           settings.sharpening,
+		Clarity:              settings.clarity,
+		GrainEffect:          settings.grainEffect,
+		ColorChromeEffect:    settings.colorChromeEffect,
+		ColorChromeBlue:      settings.colorChromeBlue,
+		WhiteBalance:         settings.whiteBalance,
+		Iso:                  settings.iso,
+		ExposureCompensation: settings.exposureCompensation,
+	}))
+
+	return r, nil
 }
 
 func FromPrimitives(rp RecipePrimitives) (*Recipe, error) {
@@ -59,4 +81,14 @@ func (r Recipe) ToPrimitives() RecipePrimitives {
 		Settings: r.settings.ToPrimitives(),
 		Link:     r.link,
 	}
+}
+
+func (p *Recipe) recordEvent(event event.Event) {
+	p.events = append(p.events, event)
+}
+
+func (r *Recipe) PullEvents() []event.Event {
+	events := r.events
+	r.events = []event.Event{}
+	return events
 }
