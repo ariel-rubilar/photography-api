@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -13,7 +12,7 @@ type MockRecipeRepository struct {
 }
 
 type repo interface {
-	photosaver.RecipeReadRepository
+	recipe.Repository
 	recipe.Repository
 }
 

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 )
@@ -12,10 +13,10 @@ import (
 type Saver struct {
 	repo       photo.Repository
 	bus        event.Bus
-	recipeRepo RecipeReadRepository
+	recipeRepo recipe.Repository
 }
 
-func New(repo photo.Repository, recipeRepo RecipeReadRepository, bus event.Bus) *Saver {
+func New(repo photo.Repository, recipeRepo recipe.Repository, bus event.Bus) *Saver {
 	return &Saver{
 		repo:       repo,
 		bus:        bus,

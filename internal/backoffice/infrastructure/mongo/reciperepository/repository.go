@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photosaver"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -19,7 +18,6 @@ type repository struct {
 
 type repo interface {
 	recipe.Repository
-	photosaver.RecipeReadRepository
 }
 
 var _ repo = (*repository)(nil)
