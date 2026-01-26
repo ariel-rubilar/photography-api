@@ -62,21 +62,13 @@ func (s *Saver) Execute(ctx context.Context, cmd SaveRecipeCommand) error {
 }
 
 func (s *Saver) ensureRecipeDoesNotExist(ctx context.Context, id string) error {
-	recipes, err := s.repo.Search(ctx, recipe.Criteria{
-		Filters: recipe.Filters{
-			{
-				Field: recipe.FieldID,
-				Op:    recipe.OpEq,
-				Value: id,
-			},
-		},
-	})
+	ok, err := s.repo.Exists(ctx, id)
 
 	if err != nil {
 		return err
 	}
 
-	if len(recipes) > 0 {
+	if ok {
 		return fmt.Errorf("recipe with id %s already exists", id)
 	}
 
