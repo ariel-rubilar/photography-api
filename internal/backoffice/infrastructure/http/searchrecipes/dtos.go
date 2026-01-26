@@ -1,8 +1,6 @@
 package searchrecipes
 
-import (
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
-)
+import "github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipequery"
 
 type SettingDTO struct {
 	FilmSimulation       string `json:"filmSimulation"`
@@ -28,13 +26,13 @@ type RecipeDTO struct {
 	Link     string     `json:"link"`
 }
 
-func newSearchRecipesData(recipes []*recipe.Recipe) []RecipeDTO {
+func newSearchRecipesData(recipes []*recipequery.RecipeDTO) []RecipeDTO {
 
 	recipeDTOs := make([]RecipeDTO, 0, len(recipes))
 
 	for _, recipe := range recipes {
 
-		primitives := recipe.ToPrimitives()
+		primitives := recipe
 
 		recipeDTOs = append(recipeDTOs, RecipeDTO{
 			ID:   primitives.ID,

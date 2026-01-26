@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipequery"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipesearcher"
 	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
 	"github.com/stretchr/testify/assert"
@@ -15,18 +15,18 @@ import (
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/searchrecipes"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/test/mocks"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/test/recipemother"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/test/mocks/recipedtomother"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	sharedmocks "github.com/ariel-rubilar/photography-api/test/mocks"
 	"github.com/gin-gonic/gin"
 )
 
 type Providers struct {
-	Repo *mocks.MockRecipeRepository
+	Repo *mocks.MockRecipeQueryRepository
 }
 
 func prepareMockWithAutoAssert(t *testing.T) Providers {
-	mockRepo := new(mocks.MockRecipeRepository)
+	mockRepo := new(mocks.MockRecipeQueryRepository)
 
 	t.Cleanup(func() {
 		mockRepo.AssertExpectations(t)
@@ -65,8 +65,8 @@ func TestSearchRecipesHandler(t *testing.T) {
 		req := httptest.NewRequest("GET", "/recipes", nil)
 		w := httptest.NewRecorder()
 
-		providers.Repo.On("Search", req.Context(), recipe.Criteria{}).
-			Return(recipemother.NewRecipeList(0), errors.New("internal server error")).
+		providers.Repo.On("Search", req.Context(), recipequery.Criteria{}).
+			Return(recipedtomother.NewRecipeDTOList(0), errors.New("internal server error")).
 			Once()
 
 		router.ServeHTTP(w, req)
@@ -88,9 +88,9 @@ func TestSearchRecipesHandler(t *testing.T) {
 		req := httptest.NewRequest("GET", "/recipes", nil)
 		w := httptest.NewRecorder()
 
-		recipes := recipemother.NewRecipeList(2)
+		recipes := recipedtomother.NewRecipeDTOList(2)
 
-		providers.Repo.On("Search", req.Context(), recipe.Criteria{}).
+		providers.Repo.On("Search", req.Context(), recipequery.Criteria{}).
 			Return(recipes, nil).
 			Once()
 

@@ -13,7 +13,6 @@ type MockRecipeRepository struct {
 
 type repo interface {
 	recipe.Repository
-	recipe.Repository
 }
 
 var _ repo = &MockRecipeRepository{}

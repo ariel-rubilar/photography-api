@@ -2,6 +2,7 @@ package reciperepository
 
 import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipequery"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -58,9 +59,9 @@ func DocumentFromDomain(r *recipe.Recipe) (recipeDocument, error) {
 	}, nil
 }
 
-func (p recipeDocument) toDomain() *recipe.Recipe {
+func (p recipeDocument) toDomain() *recipequery.RecipeDTO {
 
-	settings := recipe.RecipeSettingsPrimitives{
+	settings := recipequery.RecipeDTOSettings{
 		FilmSimulation:       p.Settings.FilmSimulation,
 		DynamicRange:         p.Settings.DynamicRange,
 		Highlight:            p.Settings.Highlight,
@@ -77,14 +78,12 @@ func (p recipeDocument) toDomain() *recipe.Recipe {
 		ExposureCompensation: p.Settings.ExposureCompensation,
 	}
 
-	recipe, _ := recipe.FromPrimitives(
-		recipe.RecipePrimitives{
-			Name:     p.Name,
-			Settings: settings,
-			Link:     p.Link,
-			ID:       p.ID.Hex(),
-		},
-	)
+	recipe := recipequery.RecipeDTO{
+		Name:     p.Name,
+		Settings: settings,
+		Link:     p.Link,
+		ID:       p.ID.Hex(),
+	}
 
-	return recipe
+	return &recipe
 }

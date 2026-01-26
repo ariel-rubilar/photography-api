@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/recipequery"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -18,6 +19,7 @@ type repository struct {
 
 type repo interface {
 	recipe.Repository
+	recipequery.Repository
 }
 
 var _ repo = (*repository)(nil)
@@ -34,16 +36,16 @@ func (r *repository) getCollection() *mongo.Collection {
 	return r.client.Database(r.database).Collection(r.collection)
 }
 
-func (r *repository) Search(ctx context.Context, c recipe.Criteria) ([]*recipe.Recipe, error) {
+func (r *repository) Search(ctx context.Context, c recipequery.Criteria) ([]*recipequery.RecipeDTO, error) {
 
 	filter := bson.M{}
 
 	for _, f := range c.Filters {
 		switch f.Op {
-		case recipe.OpEq:
+		case recipequery.OpEq:
 			key := f.Field
 
-			if key == recipe.FieldID {
+			if key == recipequery.FieldID {
 				value, err := bson.ObjectIDFromHex(f.Value.(string))
 				if err != nil {
 					return nil, fmt.Errorf("invalid ObjectID format: %w", err)
@@ -54,7 +56,7 @@ func (r *repository) Search(ctx context.Context, c recipe.Criteria) ([]*recipe.R
 
 			filter[string(key)] = f.Value
 
-		case recipe.OpContains:
+		case recipequery.OpContains:
 			value := strings.TrimSpace(f.Value.(string))
 
 			filter[string(f.Field)] = bson.M{
@@ -80,7 +82,7 @@ func (r *repository) Search(ctx context.Context, c recipe.Criteria) ([]*recipe.R
 		return nil, fmt.Errorf("failed to decode documents: %w", err)
 	}
 
-	recipes := make([]*recipe.Recipe, len(*documents))
+	recipes := make([]*recipequery.RecipeDTO, len(*documents))
 
 	for i, doc := range *documents {
 		recipes[i] = doc.toDomain()
