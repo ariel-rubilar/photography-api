@@ -2,6 +2,7 @@ package photorepository
 
 import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/photo"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/usecases/photoquery"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -12,16 +13,16 @@ type photoDocument struct {
 	RecipeID string        `bson:"recipeId"`
 }
 
-func (p *photoDocument) ToDomain() (*photo.Photo, error) {
+func (p *photoDocument) ToDomain() *photoquery.PhotoDTO {
 
-	primitives := photo.PhotoPrimitives{
+	primitives := photoquery.PhotoDTO{
 		ID:       p.ID.Hex(),
 		Title:    p.Title,
 		URL:      p.URL,
 		RecipeID: p.RecipeID,
 	}
 
-	return photo.FromPrimitives(primitives)
+	return &primitives
 }
 
 func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {

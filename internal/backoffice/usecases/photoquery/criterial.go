@@ -1,4 +1,4 @@
-package photo
+package photoquery
 
 type Criteria struct {
 	Filters Filters

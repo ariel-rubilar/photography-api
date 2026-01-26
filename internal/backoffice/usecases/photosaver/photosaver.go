@@ -48,21 +48,13 @@ func (s *Saver) Execute(ctx context.Context, cmd SavePhotoCommand) error {
 }
 
 func (s *Saver) ensurePhotoDoNotExists(ctx context.Context, id string) error {
-	photos, err := s.repo.Search(ctx, photo.Criteria{
-		Filters: photo.Filters{
-			{
-				Field: photo.FieldID,
-				Op:    photo.OpEq,
-				Value: id,
-			},
-		},
-	})
+	ok, err := s.repo.Exists(ctx, id)
 
 	if err != nil {
 		return err
 	}
 
-	if len(photos) > 0 {
+	if ok {
 		return domainerror.Conflict{
 			Reason: fmt.Sprintf("%s already exists", id),
 		}

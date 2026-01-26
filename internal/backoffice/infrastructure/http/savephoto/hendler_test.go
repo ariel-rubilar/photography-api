@@ -97,18 +97,10 @@ func TestSavePhotoHandler(t *testing.T) {
 			}),
 		).Return(nil).Once()
 
-		providers.Repo.On("Search",
+		providers.Repo.On("Exists",
 			req.Context(),
-			photo.Criteria{
-				Filters: photo.Filters{
-					{
-						Field: photo.FieldID,
-						Op:    photo.OpEq,
-						Value: expectedPhoto.ToPrimitives().ID,
-					},
-				},
-			},
-		).Return([]*photo.Photo{}, nil).Once()
+			expectedPhoto.ToPrimitives().ID,
+		).Return(false, nil).Once()
 
 		providers.EventBus.On("Publish", req.Context(), mock.MatchedBy(func(events []event.Event) bool {
 
@@ -165,18 +157,10 @@ func TestSavePhotoHandler(t *testing.T) {
 		require.NoError(t, err)
 		providers.RecipeRepo.On("Exists", req.Context(), primitives.RecipeID).Return(true, nil).Once()
 
-		providers.Repo.On("Search",
+		providers.Repo.On("Exists",
 			req.Context(),
-			photo.Criteria{
-				Filters: photo.Filters{
-					{
-						Field: photo.FieldID,
-						Op:    photo.OpEq,
-						Value: expectedPhoto.ToPrimitives().ID,
-					},
-				},
-			},
-		).Return([]*photo.Photo{}, nil).Once()
+			expectedPhoto.ToPrimitives().ID,
+		).Return(false, nil).Once()
 
 		providers.Repo.On("Save",
 			req.Context(),
@@ -220,18 +204,10 @@ func TestSavePhotoHandler(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 		require.NoError(t, err)
 
-		providers.Repo.On("Search",
+		providers.Repo.On("Exists",
 			req.Context(),
-			photo.Criteria{
-				Filters: photo.Filters{
-					{
-						Field: photo.FieldID,
-						Op:    photo.OpEq,
-						Value: expectedPhoto.ToPrimitives().ID,
-					},
-				},
-			},
-		).Return([]*photo.Photo{expectedPhoto}, nil).Once()
+			expectedPhoto.ToPrimitives().ID,
+		).Return(true, nil).Once()
 
 		w := httptest.NewRecorder()
 
@@ -267,18 +243,10 @@ func TestSavePhotoHandler(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 		require.NoError(t, err)
 
-		providers.Repo.On("Search",
+		providers.Repo.On("Exists",
 			req.Context(),
-			photo.Criteria{
-				Filters: photo.Filters{
-					{
-						Field: photo.FieldID,
-						Op:    photo.OpEq,
-						Value: expectedPhoto.ToPrimitives().ID,
-					},
-				},
-			},
-		).Return([]*photo.Photo{}, nil).Once()
+			expectedPhoto.ToPrimitives().ID,
+		).Return(false, nil).Once()
 
 		providers.RecipeRepo.On("Exists", req.Context(), primitives.RecipeID).Return(false, nil).Once()
 
@@ -324,18 +292,10 @@ func TestSavePhotoHandler(t *testing.T) {
 			}),
 		).Return(nil).Once()
 
-		providers.Repo.On("Search",
+		providers.Repo.On("Exists",
 			req.Context(),
-			photo.Criteria{
-				Filters: photo.Filters{
-					{
-						Field: photo.FieldID,
-						Op:    photo.OpEq,
-						Value: expectedPhoto.ToPrimitives().ID,
-					},
-				},
-			},
-		).Return([]*photo.Photo{}, nil).Once()
+			expectedPhoto.ToPrimitives().ID,
+		).Return(false, nil).Once()
 
 		providers.EventBus.On("Publish", req.Context(), mock.MatchedBy(func(events []event.Event) bool {
 
