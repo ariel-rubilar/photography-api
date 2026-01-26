@@ -29,16 +29,8 @@ func (s *Saver) Execute(ctx context.Context, cmd SavePhotoCommand) error {
 		return err
 	}
 
-	ok, err := s.recipeRepo.Exists(ctx, cmd.RecipeID)
-
-	if err != nil {
+	if err := s.ensureRecipeExists(ctx, cmd.RecipeID); err != nil {
 		return err
-	}
-
-	if !ok {
-		return domainerror.NotFound{
-			Entity: "recipe",
-		}
 	}
 
 	newPhoto, err := photo.Create(cmd.ID, cmd.Title, cmd.URL, cmd.RecipeID)
@@ -47,8 +39,7 @@ func (s *Saver) Execute(ctx context.Context, cmd SavePhotoCommand) error {
 		return err
 	}
 
-	err = s.repo.Save(ctx, newPhoto)
-	if err != nil {
+	if err = s.repo.Save(ctx, newPhoto); err != nil {
 		return err
 	}
 
@@ -73,6 +64,22 @@ func (s *Saver) ensurePhotoDoNotExists(ctx context.Context, id string) error {
 	if len(photos) > 0 {
 		return domainerror.Conflict{
 			Reason: fmt.Sprintf("%s already exists", id),
+		}
+	}
+
+	return nil
+}
+
+func (s *Saver) ensureRecipeExists(ctx context.Context, id string) error {
+	ok, err := s.recipeRepo.Exists(ctx, id)
+
+	if err != nil {
+		return err
+	}
+
+	if !ok {
+		return domainerror.NotFound{
+			Entity: "recipe",
 		}
 	}
 

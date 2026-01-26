@@ -54,8 +54,7 @@ func (s *Saver) Execute(ctx context.Context, cmd SaveRecipeCommand) error {
 		return err
 	}
 
-	err = s.repo.Save(ctx, new)
-	if err != nil {
+	if err = s.repo.Save(ctx, new); err != nil {
 		return err
 	}
 
