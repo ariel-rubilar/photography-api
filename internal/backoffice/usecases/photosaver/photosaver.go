@@ -23,13 +23,13 @@ func New(repo photo.Repository, recipeRepo RecipeReadRepository, bus event.Bus) 
 	}
 }
 
-func (s *Saver) Execute(ctx context.Context, id, title, url, recipeID string) error {
+func (s *Saver) Execute(ctx context.Context, cmd SavePhotoCommand) error {
 
-	if err := s.ensurePhotoDoNotExists(ctx, id); err != nil {
+	if err := s.ensurePhotoDoNotExists(ctx, cmd.ID); err != nil {
 		return err
 	}
 
-	ok, err := s.recipeRepo.Exists(ctx, recipeID)
+	ok, err := s.recipeRepo.Exists(ctx, cmd.RecipeID)
 
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (s *Saver) Execute(ctx context.Context, id, title, url, recipeID string) er
 		}
 	}
 
-	newPhoto, err := photo.Create(id, title, url, recipeID)
+	newPhoto, err := photo.Create(cmd.ID, cmd.Title, cmd.URL, cmd.RecipeID)
 
 	if err != nil {
 		return err

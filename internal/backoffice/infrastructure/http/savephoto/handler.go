@@ -24,10 +24,12 @@ func NewHandler(searcher *photosaver.Saver) gin.HandlerFunc {
 
 		err := searcher.Execute(
 			c.Request.Context(),
-			request.ID,
-			request.Title,
-			request.URL,
-			request.RecipeID,
+			photosaver.SavePhotoCommand{
+				ID:       request.ID,
+				Title:    request.Title,
+				URL:      request.URL,
+				RecipeID: request.RecipeID,
+			},
 		)
 
 		if err != nil {
