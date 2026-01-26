@@ -50,12 +50,25 @@ func (s *Saver) Execute(ctx context.Context, cmd SaveRecipeCommand) error {
 		return err
 	}
 
+	if err := s.ensureRecipeDoesNotExist(ctx, new.ID()); err != nil {
+		return err
+	}
+
+	err = s.repo.Save(ctx, new)
+	if err != nil {
+		return err
+	}
+
+	return s.bus.Publish(ctx, new.PullEvents())
+}
+
+func (s *Saver) ensureRecipeDoesNotExist(ctx context.Context, id string) error {
 	recipes, err := s.repo.Search(ctx, recipe.Criteria{
 		Filters: recipe.Filters{
 			{
 				Field: recipe.FieldID,
 				Op:    recipe.OpEq,
-				Value: new.ID(),
+				Value: id,
 			},
 		},
 	})
@@ -65,13 +78,8 @@ func (s *Saver) Execute(ctx context.Context, cmd SaveRecipeCommand) error {
 	}
 
 	if len(recipes) > 0 {
-		return fmt.Errorf("recipe with id %s already exists", new.ID())
+		return fmt.Errorf("recipe with id %s already exists", id)
 	}
 
-	err = s.repo.Save(ctx, new)
-	if err != nil {
-		return err
-	}
-
-	return s.bus.Publish(ctx, new.PullEvents())
+	return nil
 }
