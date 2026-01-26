@@ -15,7 +15,7 @@ import (
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/searchrecipes"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/test/mocks"
-	"github.com/ariel-rubilar/photography-api/internal/backoffice/test/mocks/recipedtomother"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/test/recipedtomother"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	sharedmocks "github.com/ariel-rubilar/photography-api/test/mocks"
 	"github.com/gin-gonic/gin"
