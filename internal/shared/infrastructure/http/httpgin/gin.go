@@ -29,7 +29,8 @@ type Providers struct {
 }
 
 type Config struct {
-	Env env.Env
+	Env            env.Env
+	GoogleClientID string
 }
 
 func NewGinEngine(cfg Config, providers *Providers) *gin.Engine {
@@ -55,12 +56,12 @@ func NewGinEngine(cfg Config, providers *Providers) *gin.Engine {
 		DB: providers.DB,
 	})
 
-	registerRoutes(e, providers)
+	registerRoutes(e, providers, cfg)
 
 	return e
 }
 
-func registerRoutes(r *gin.Engine, providers *Providers) {
+func registerRoutes(r *gin.Engine, providers *Providers, cfg Config) {
 
 	apiVersionGroup := r.Group("/api/v1")
 
@@ -71,6 +72,8 @@ func registerRoutes(r *gin.Engine, providers *Providers) {
 		RecipeSaver:     providers.RecipeSaver,
 		PhotoSaver:      providers.PhotoSaver,
 		UploadURLGetter: providers.UploadURLGetter,
+	}, backofficehttp.Config{
+		GoogleClientID: cfg.GoogleClientID,
 	})
 
 	webGroup := apiVersionGroup.Group("/web")

@@ -18,6 +18,7 @@ type Config struct {
 	MongoURI  string
 	ServerEnv Env
 	R2        R2Config
+	Auth      Auth
 }
 
 type R2Config struct {
@@ -26,6 +27,10 @@ type R2Config struct {
 	AccountID       string
 	BucketName      string
 	PublicBaseURL   string
+}
+
+type Auth struct {
+	GoogleClientID string
 }
 
 func LoadConfig() (*Config, error) {
@@ -56,10 +61,15 @@ func LoadConfig() (*Config, error) {
 		PublicBaseURL:   os.Getenv("R2_PUBLIC_BASE_URL"),
 	}
 
+	authConfig := Auth{
+		GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"),
+	}
+
 	return &Config{
 		MongoURI:  uri,
 		ServerEnv: serverEnv,
 		R2:        r2Config,
+		Auth:      authConfig,
 	}, nil
 
 }

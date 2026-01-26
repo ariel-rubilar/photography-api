@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/getuploadurl"
+	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/middleware"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/savephoto"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/saverecipe"
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/infrastructure/http/searchrecipes"
@@ -19,7 +20,12 @@ type Providers struct {
 	UploadURLGetter *uploadurlgetter.Getter
 }
 
-func RegisterRoutes(rg *gin.RouterGroup, providers *Providers) {
+type Config struct {
+	GoogleClientID string
+}
+
+func RegisterRoutes(rg *gin.RouterGroup, providers *Providers, config Config) {
+	rg.Use(middleware.GoogleAuthMiddleware(config.GoogleClientID))
 	rg.GET("/recipes", searchrecipes.NewHandler(providers.RecipeSearcher))
 	rg.POST("/recipes", saverecipe.NewHandler(providers.RecipeSaver))
 	rg.POST("/photos", savephoto.NewHandler(providers.PhotoSaver))
