@@ -40,7 +40,7 @@ func setupBackoffice(
 
 	recipeSearcherUseCase := recipesearcher.New(recipeRepository)
 
-	recipeSaverUseCase := recipesaver.New(recipeRepository)
+	recipeSaverUseCase := recipesaver.New(recipeRepository, bus)
 
 	photoSaverUseCase := photosaver.New(photoRepository, recipeRepository, bus)
 

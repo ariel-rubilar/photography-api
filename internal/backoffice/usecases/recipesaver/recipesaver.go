@@ -5,15 +5,18 @@ import (
 	"fmt"
 
 	"github.com/ariel-rubilar/photography-api/internal/backoffice/recipe"
+	"github.com/ariel-rubilar/photography-api/internal/shared/domain/event"
 )
 
 type Saver struct {
 	repo recipe.Repository
+	bus  event.Bus
 }
 
-func New(repo recipe.Repository) *Saver {
+func New(repo recipe.Repository, bus event.Bus) *Saver {
 	return &Saver{
 		repo: repo,
+		bus:  bus,
 	}
 }
 
@@ -37,5 +40,10 @@ func (s *Saver) Execute(ctx context.Context, new *recipe.Recipe) error {
 		return fmt.Errorf("recipe with id %s already exists", new.ID())
 	}
 
-	return s.repo.Save(ctx, new)
+	err = s.repo.Save(ctx, new)
+	if err != nil {
+		return err
+	}
+
+	return s.bus.Publish(ctx, new.PullEvents())
 }
