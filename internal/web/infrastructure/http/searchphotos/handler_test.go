@@ -13,7 +13,6 @@ import (
 	sharedmocks "github.com/ariel-rubilar/photography-api/test/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
@@ -67,11 +66,12 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 
 		photos := photodtomother.NewPhotoDTOList(0)
 
-		providers.Repo.On("Search", mock.Anything, photoquery.Criteria{}).Return(photos, nil).Once()
-
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
 		require.NoError(t, err)
+
+		providers.Repo.On("Search", req.Context(), photoquery.Criteria{}).Return(photos, nil).Once()
+
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, 200, w.Code)
@@ -93,11 +93,12 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 		router := preparePhotoHandlerWithProviders(providers)
 		photos := photodtomother.NewPhotoDTOList(2)
 
-		providers.Repo.On("Search", mock.Anything, photoquery.Criteria{}).Return(photos, nil).Once()
-
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
 		require.NoError(t, err)
+
+		providers.Repo.On("Search", req.Context(), photoquery.Criteria{}).Return(photos, nil).Once()
+
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, 200, w.Code)
@@ -150,13 +151,14 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 
 		router := preparePhotoHandlerWithProviders(providers)
 
-		providers.Repo.On("Search", mock.Anything, photoquery.Criteria{}).Return([]*photoquery.PhotoDTO{}, domainerror.Validation{
-			Reason: "TEST",
-		}).Once()
-
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
 		require.NoError(t, err)
+
+		providers.Repo.On("Search", req.Context(), photoquery.Criteria{}).Return([]*photoquery.PhotoDTO{}, domainerror.Validation{
+			Reason: "TEST",
+		}).Once()
+
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, 500, w.Code)
