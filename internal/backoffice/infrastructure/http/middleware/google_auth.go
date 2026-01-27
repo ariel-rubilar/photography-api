@@ -14,7 +14,7 @@ import (
 func GoogleAuthMiddleware(googleClientID string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
-		auth := ctx.GetHeader("Authorization")
+		auth := ctx.GetHeader("X-ID-TOKEN")
 		if auth == "" {
 			ctx.Error(
 				httperror.Wrap(

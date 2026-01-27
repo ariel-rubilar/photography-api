@@ -1,3 +1,9 @@
 vars {
   baseUrl: http://localhost:8080
+  clientId: {{process.env.AUTH_CLIENT_ID}}
+  clientSecret: {{process.env.AUTH_CLIENT_SECRET}}
+  callbackUri: {{process.env.AUTH_CALLBACK_URI}}
+  authorizationUri: {{process.env.AUTH_AUTHORIZATION_URI}}
+  accessTokenUri: {{process.env.AUTH_ACCESS_TOKEN_URI}}
+  scopes: {{process.env.AUTH_SCOPES}}
 }
