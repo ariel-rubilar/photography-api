@@ -16,7 +16,7 @@ func newPhotoCreatedEvent(id, recipeID string) PhotoCreatedEvent {
 	return PhotoCreatedEvent{
 		id:        id,
 		recipeID:  recipeID,
-		BaseEvent: event.NewBaseEvent(id),
+		BaseEvent: event.NewBaseEvent(),
 	}
 }
 

@@ -111,7 +111,7 @@ func TestSavePhotoHandler(t *testing.T) {
 				return false
 			}
 
-			require.Equal(t, primitives.ID, actual.AggregateID())
+			require.Equal(t, primitives.ID, actual.PhotoID())
 			require.Equal(t, primitives.RecipeID, actual.RecipeID())
 			require.Equal(t, primitives.ID, actual.PhotoID())
 			require.Equal(t, photo.PhotoCreatedEventType, actual.Type())
@@ -306,7 +306,7 @@ func TestSavePhotoHandler(t *testing.T) {
 				return false
 			}
 
-			require.Equal(t, primitives.ID, actual.AggregateID())
+			require.Equal(t, primitives.ID, actual.PhotoID())
 			require.Equal(t, primitives.RecipeID, actual.RecipeID())
 			require.Equal(t, primitives.ID, actual.PhotoID())
 			require.Equal(t, photo.PhotoCreatedEventType, actual.Type())

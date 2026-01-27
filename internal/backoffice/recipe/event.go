@@ -37,7 +37,7 @@ func newRecipeCreatedEvent(id, name, link string, settings RecipeCreatedEventSet
 		name:      name,
 		link:      link,
 		settings:  settings,
-		BaseEvent: event.NewBaseEvent(id),
+		BaseEvent: event.NewBaseEvent(),
 	}
 }
 
