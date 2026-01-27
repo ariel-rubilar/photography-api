@@ -42,8 +42,6 @@ func Run(cfg env.Config, logger *zap.Logger) error {
 
 	bus := imbus.New()
 
-	setupProjection(mongoClient, bus)
-
 	webProviders := setupWeb(mongoClient, bus)
 
 	realClock := realclock.RealClock{}
