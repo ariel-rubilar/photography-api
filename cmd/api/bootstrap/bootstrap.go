@@ -44,7 +44,7 @@ func Run(cfg env.Config, logger *zap.Logger) error {
 
 	setupProjection(mongoClient, bus)
 
-	webProviders := setupWeb(mongoClient)
+	webProviders := setupWeb(mongoClient, bus)
 
 	realClock := realclock.RealClock{}
 
