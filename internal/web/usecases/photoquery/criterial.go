@@ -9,8 +9,7 @@ type Filters []Filter
 type Field string
 
 const (
-	FieldID   Field = "id"
-	FieldName Field = "name"
+	FieldID Field = "id"
 )
 
 type Filter struct {
