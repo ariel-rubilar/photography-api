@@ -1,6 +1,6 @@
 package searchphotos
 
-import "github.com/ariel-rubilar/photography-api/internal/web/photo"
+import "github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
 
 type PhotoRecipeSettings struct {
 	FilmSimulation       string `json:"filmSimulation"`
@@ -32,13 +32,13 @@ type PhotoDTO struct {
 	Recipe PhotoRecipe `json:"recipe"`
 }
 
-func newSearchPhotosData(photos []*photo.Photo) []PhotoDTO {
+func newSearchPhotosData(photos []*photoquery.PhotoDTO) []PhotoDTO {
 
 	var photoDTOs []PhotoDTO
 
 	for _, photo := range photos {
 
-		primitives := photo.ToPrimitives()
+		primitives := photo
 
 		photoDTOs = append(photoDTOs, PhotoDTO{
 			ID:    primitives.ID,

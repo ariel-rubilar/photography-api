@@ -2,6 +2,7 @@ package photorepository
 
 import (
 	"github.com/ariel-rubilar/photography-api/internal/web/photo"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -36,35 +37,34 @@ type photoDocument struct {
 	Recipe photoRecipe   `bson:"recipe"`
 }
 
-func (p photoDocument) toDomain() *photo.Photo {
+func (p photoDocument) toDomain() *photoquery.PhotoDTO {
 
-	return photo.FromPrimitives(
-		photo.PhotoPrimitives{
-			ID:    p.ID.Hex(),
-			Title: p.Title,
-			URL:   p.URL,
-			Recipe: photo.RecipePrimitives{
-				Name: p.Recipe.Name,
-				Settings: photo.RecipeSettingsPrimitives{
-					FilmSimulation:       p.Recipe.Settings.FilmSimulation,
-					DynamicRange:         p.Recipe.Settings.DynamicRange,
-					Highlight:            p.Recipe.Settings.Highlight,
-					Shadow:               p.Recipe.Settings.Shadow,
-					Color:                p.Recipe.Settings.Color,
-					NoiseReduction:       p.Recipe.Settings.NoiseReduction,
-					Sharpening:           p.Recipe.Settings.Sharpening,
-					Clarity:              p.Recipe.Settings.Clarity,
-					GrainEffect:          p.Recipe.Settings.GrainEffect,
-					ColorChromeEffect:    p.Recipe.Settings.ColorChromeEffect,
-					ColorChromeBlue:      p.Recipe.Settings.ColorChromeBlue,
-					WhiteBalance:         p.Recipe.Settings.WhiteBalance,
-					Iso:                  p.Recipe.Settings.Iso,
-					ExposureCompensation: p.Recipe.Settings.ExposureCompensation,
-				},
-				Link: p.Recipe.Link,
+	return &photoquery.PhotoDTO{
+		ID:    p.ID.Hex(),
+		Title: p.Title,
+		URL:   p.URL,
+		Recipe: photoquery.PhotoDTORecipe{
+			Name: p.Recipe.Name,
+			Settings: photoquery.PhotoDTORecipeSettings{
+				FilmSimulation:       p.Recipe.Settings.FilmSimulation,
+				DynamicRange:         p.Recipe.Settings.DynamicRange,
+				Highlight:            p.Recipe.Settings.Highlight,
+				Shadow:               p.Recipe.Settings.Shadow,
+				Color:                p.Recipe.Settings.Color,
+				NoiseReduction:       p.Recipe.Settings.NoiseReduction,
+				Sharpening:           p.Recipe.Settings.Sharpening,
+				Clarity:              p.Recipe.Settings.Clarity,
+				GrainEffect:          p.Recipe.Settings.GrainEffect,
+				ColorChromeEffect:    p.Recipe.Settings.ColorChromeEffect,
+				ColorChromeBlue:      p.Recipe.Settings.ColorChromeBlue,
+				WhiteBalance:         p.Recipe.Settings.WhiteBalance,
+				Iso:                  p.Recipe.Settings.Iso,
+				ExposureCompensation: p.Recipe.Settings.ExposureCompensation,
 			},
+			Link: p.Recipe.Link,
 		},
-	)
+	}
+
 }
 
 func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {

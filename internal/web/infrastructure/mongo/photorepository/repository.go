@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ariel-rubilar/photography-api/internal/web/photo"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -15,7 +16,12 @@ type repository struct {
 	collection string
 }
 
-var _ photo.Repository = (*repository)(nil)
+type repo interface {
+	photo.Repository
+	photoquery.Repository
+}
+
+var _ repo = (*repository)(nil)
 
 func NewMongoRepository(client *mongo.Client) *repository {
 	return &repository{
@@ -29,7 +35,7 @@ func (r *repository) getCollection() *mongo.Collection {
 	return r.client.Database(r.database).Collection(r.collection)
 }
 
-func (r *repository) Search(ctx context.Context) ([]*photo.Photo, error) {
+func (r *repository) Search(ctx context.Context, criterial photoquery.Criteria) ([]*photoquery.PhotoDTO, error) {
 
 	cursor, err := r.client.Database(r.database).Collection(r.collection).Find(ctx, bson.D{})
 	if err != nil {
@@ -47,7 +53,7 @@ func (r *repository) Search(ctx context.Context) ([]*photo.Photo, error) {
 		return nil, fmt.Errorf("failed to decode documents: %w", err)
 	}
 
-	photos := make([]*photo.Photo, len(*documents))
+	photos := make([]*photoquery.PhotoDTO, len(*documents))
 
 	for i, doc := range *documents {
 		photos[i] = doc.toDomain()

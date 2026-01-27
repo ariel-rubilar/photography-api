@@ -3,19 +3,19 @@ package searcher
 import (
 	"context"
 
-	"github.com/ariel-rubilar/photography-api/internal/web/photo"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
 )
 
 type Searcher struct {
-	repo photo.Repository
+	repo photoquery.Repository
 }
 
-func New(repo photo.Repository) *Searcher {
+func New(repo photoquery.Repository) *Searcher {
 	return &Searcher{
 		repo: repo,
 	}
 }
 
-func (s *Searcher) Execute(ctx context.Context) ([]*photo.Photo, error) {
-	return s.repo.Search(ctx)
+func (s *Searcher) Execute(ctx context.Context) ([]*photoquery.PhotoDTO, error) {
+	return s.repo.Search(ctx, photoquery.Criteria{})
 }

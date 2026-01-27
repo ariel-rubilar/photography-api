@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ariel-rubilar/photography-api/internal/web/photo"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -11,11 +12,16 @@ type MockPhotoRepository struct {
 	mock.Mock
 }
 
-var _ photo.Repository = &MockPhotoRepository{}
+type repo interface {
+	photo.Repository
+	photoquery.Repository
+}
 
-func (m *MockPhotoRepository) Search(ctx context.Context) ([]*photo.Photo, error) {
-	args := m.Called(ctx)
-	return args.Get(0).([]*photo.Photo), args.Error(1)
+var _ repo = &MockPhotoRepository{}
+
+func (m *MockPhotoRepository) Search(ctx context.Context, criterial photoquery.Criteria) ([]*photoquery.PhotoDTO, error) {
+	args := m.Called(ctx, criterial)
+	return args.Get(0).([]*photoquery.PhotoDTO), args.Error(1)
 }
 
 func (m *MockPhotoRepository) Save(ctx context.Context, new *photo.Photo) error {

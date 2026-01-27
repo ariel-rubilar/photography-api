@@ -8,9 +8,8 @@ import (
 
 	sharedhttp "github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
-	"github.com/ariel-rubilar/photography-api/internal/web/photo"
 	"github.com/ariel-rubilar/photography-api/internal/web/test/mocks"
-	"github.com/ariel-rubilar/photography-api/internal/web/test/photomother"
+	"github.com/ariel-rubilar/photography-api/internal/web/test/photodtomother"
 	sharedmocks "github.com/ariel-rubilar/photography-api/test/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -19,6 +18,7 @@ import (
 
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	"github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http/searchphotos"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 )
 
@@ -65,9 +65,9 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 
 		router := preparePhotoHandlerWithProviders(providers)
 
-		photos := photomother.NewPhotoList(0)
+		photos := photodtomother.NewPhotoDTOList(0)
 
-		providers.Repo.On("Search", mock.Anything).Return(photos, nil).Once()
+		providers.Repo.On("Search", mock.Anything, photoquery.Criteria{}).Return(photos, nil).Once()
 
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
@@ -91,9 +91,9 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 		providers := prepareMockWithAutoAssert(t)
 
 		router := preparePhotoHandlerWithProviders(providers)
-		photos := photomother.NewPhotoList(2)
+		photos := photodtomother.NewPhotoDTOList(2)
 
-		providers.Repo.On("Search", mock.Anything).Return(photos, nil).Once()
+		providers.Repo.On("Search", mock.Anything, photoquery.Criteria{}).Return(photos, nil).Once()
 
 		w := httptest.NewRecorder()
 		req, err := http.NewRequest("GET", "/photos", nil)
@@ -113,7 +113,7 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 		for i, photo := range photos {
 			actual := resp.Data[i]
 
-			primitives := photo.ToPrimitives()
+			primitives := photo
 
 			expected := searchphotos.PhotoDTO{
 				ID:    primitives.ID,
@@ -150,7 +150,7 @@ func TestPhotoHandler_SearchPhotos(t *testing.T) {
 
 		router := preparePhotoHandlerWithProviders(providers)
 
-		providers.Repo.On("Search", mock.Anything).Return([]*photo.Photo{}, domainerror.Validation{
+		providers.Repo.On("Search", mock.Anything, photoquery.Criteria{}).Return([]*photoquery.PhotoDTO{}, domainerror.Validation{
 			Reason: "TEST",
 		}).Once()
 
