@@ -1,4 +1,4 @@
-package searcher
+package photosearcher
 
 import (
 	"context"

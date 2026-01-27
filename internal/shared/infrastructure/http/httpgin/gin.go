@@ -11,7 +11,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/health"
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
-	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photosearcher"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.uber.org/zap"
 
@@ -22,7 +22,7 @@ type Providers struct {
 	RecipeSearcher  *recipesearcher.Searcher
 	RecipeSaver     *recipesaver.Saver
 	PhotoSaver      *photosaver.Saver
-	PhotoSearcher   *searcher.Searcher
+	PhotoSearcher   *photosearcher.Searcher
 	DB              *mongo.Client
 	Logger          *zap.Logger
 	UploadURLGetter *uploadurlgetter.Getter

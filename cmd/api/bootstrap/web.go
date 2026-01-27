@@ -7,20 +7,20 @@ import (
 	photorepository "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/mongo/photorepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/infrastructure/mongo/reciperepository"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photosaver"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photosearcher"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/recipesaver"
-	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type webProviders struct {
-	PhotoSearcher *searcher.Searcher
+	PhotoSearcher *photosearcher.Searcher
 }
 
 func setupWeb(mongoClient *mongo.Client, bus event.Bus) *webProviders {
 
 	webPhotoRepository := photorepository.NewMongoRepository(mongoClient)
 
-	photoSearcherUseCase := searcher.New(webPhotoRepository)
+	photoSearcherUseCase := photosearcher.New(webPhotoRepository)
 
 	webRecipeRepository := reciperepository.NewMongoRepository(mongoClient)
 

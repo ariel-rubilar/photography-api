@@ -18,7 +18,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/shared/domain/domainerror"
 	"github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http/searchphotos"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photoquery"
-	"github.com/ariel-rubilar/photography-api/internal/web/usecases/searcher"
+	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photosearcher"
 )
 
 type Providers struct {
@@ -42,7 +42,7 @@ func preparePhotoHandlerWithProviders(providers Providers) *gin.Engine {
 
 	router := gin.New()
 
-	uc := searcher.New(providers.Repo)
+	uc := photosearcher.New(providers.Repo)
 	h := searchphotos.NewHandler(uc)
 
 	logger := sharedmocks.NewNoOpLogger()
