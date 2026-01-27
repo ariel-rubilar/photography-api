@@ -25,6 +25,10 @@ func NewMongoRepository(client *mongo.Client) *repository {
 	}
 }
 
+func (r *repository) getCollection() *mongo.Collection {
+	return r.client.Database(r.database).Collection(r.collection)
+}
+
 func (r *repository) Search(ctx context.Context) ([]*photo.Photo, error) {
 
 	cursor, err := r.client.Database(r.database).Collection(r.collection).Find(ctx, bson.D{})
@@ -50,4 +54,44 @@ func (r *repository) Search(ctx context.Context) ([]*photo.Photo, error) {
 	}
 
 	return photos, nil
+}
+
+func (r *repository) Save(ctx context.Context, new *photo.Photo) error {
+	collection := r.getCollection()
+
+	d, error := DocumentFromDomain(new)
+	if error != nil {
+		return fmt.Errorf("failed to convert domain to document: %w", error)
+	}
+	_, err := collection.InsertOne(ctx, d)
+
+	if err != nil {
+		return fmt.Errorf("failed to insert document: %w", err)
+	}
+
+	return nil
+}
+
+func (r *repository) Exists(ctx context.Context, id string) (bool, error) {
+	collection := r.getCollection()
+
+	filter := bson.M{}
+
+	value, err := bson.ObjectIDFromHex(id)
+	if err != nil {
+		return false, fmt.Errorf("invalid ObjectID format: %w", err)
+	}
+
+	filter["_id"] = value
+
+	result := collection.FindOne(ctx, filter)
+
+	if err := result.Err(); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
 }

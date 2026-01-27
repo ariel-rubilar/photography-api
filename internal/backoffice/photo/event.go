@@ -10,13 +10,17 @@ type PhotoCreatedEvent struct {
 	event.BaseEvent
 	id       string
 	recipeID string
+	title    string
+	url      string
 }
 
-func newPhotoCreatedEvent(id, recipeID string) PhotoCreatedEvent {
+func newPhotoCreatedEvent(id, recipeID, title, url string) PhotoCreatedEvent {
 	return PhotoCreatedEvent{
 		id:        id,
 		recipeID:  recipeID,
 		BaseEvent: event.NewBaseEvent(),
+		title:     title,
+		url:       url,
 	}
 }
 
@@ -30,4 +34,12 @@ func (e PhotoCreatedEvent) RecipeID() string {
 
 func (e PhotoCreatedEvent) PhotoID() string {
 	return e.id
+}
+
+func (e PhotoCreatedEvent) Title() string {
+	return e.title
+}
+
+func (e PhotoCreatedEvent) URL() string {
+	return e.url
 }

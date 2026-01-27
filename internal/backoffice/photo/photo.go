@@ -40,7 +40,7 @@ func Create(id, title, url, recipeID string) (*Photo, error) {
 		urlVO,
 	)
 
-	photo.recordEvent(newPhotoCreatedEvent(id, recipeID))
+	photo.recordEvent(newPhotoCreatedEvent(id, recipeID, title, url))
 
 	return photo, nil
 }

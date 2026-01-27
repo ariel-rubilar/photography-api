@@ -23,6 +23,7 @@ type photoRecipeSettings struct {
 }
 
 type photoRecipe struct {
+	ID       bson.ObjectID       `bson:"_id,omitempty"`
 	Name     string              `bson:"name"`
 	Settings photoRecipeSettings `bson:"settings"`
 	Link     string              `bson:"link"`
@@ -64,4 +65,43 @@ func (p photoDocument) toDomain() *photo.Photo {
 			},
 		},
 	)
+}
+
+func DocumentFromDomain(r *photo.Photo) (photoDocument, error) {
+	primitives := r.ToPrimitives()
+	id, err := bson.ObjectIDFromHex(primitives.ID)
+	if err != nil {
+		return photoDocument{}, err
+	}
+
+	recipeID, err := bson.ObjectIDFromHex(primitives.Recipe.ID)
+	if err != nil {
+		return photoDocument{}, err
+	}
+	return photoDocument{
+		ID:    id,
+		Title: primitives.Title,
+		URL:   primitives.URL,
+		Recipe: photoRecipe{
+			ID:   recipeID,
+			Name: primitives.Recipe.Name,
+			Settings: photoRecipeSettings{
+				FilmSimulation:       primitives.Recipe.Settings.FilmSimulation,
+				DynamicRange:         primitives.Recipe.Settings.DynamicRange,
+				Highlight:            primitives.Recipe.Settings.Highlight,
+				Shadow:               primitives.Recipe.Settings.Shadow,
+				Color:                primitives.Recipe.Settings.Color,
+				NoiseReduction:       primitives.Recipe.Settings.NoiseReduction,
+				Sharpening:           primitives.Recipe.Settings.Sharpening,
+				Clarity:              primitives.Recipe.Settings.Clarity,
+				GrainEffect:          primitives.Recipe.Settings.GrainEffect,
+				ColorChromeEffect:    primitives.Recipe.Settings.ColorChromeEffect,
+				ColorChromeBlue:      primitives.Recipe.Settings.ColorChromeBlue,
+				WhiteBalance:         primitives.Recipe.Settings.WhiteBalance,
+				Iso:                  primitives.Recipe.Settings.Iso,
+				ExposureCompensation: primitives.Recipe.Settings.ExposureCompensation,
+			},
+			Link: primitives.Recipe.Link,
+		},
+	}, nil
 }
