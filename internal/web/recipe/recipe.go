@@ -42,3 +42,7 @@ func (r Recipe) ToPrimitives() RecipePrimitives {
 		Link:     r.link,
 	}
 }
+
+func (r Recipe) ID() string {
+	return r.id
+}

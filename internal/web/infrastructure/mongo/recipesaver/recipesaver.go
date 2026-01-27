@@ -1,0 +1,69 @@
+package recipesaver
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/ariel-rubilar/photography-api/internal/web/recipe"
+)
+
+type Saver struct {
+	repo recipe.Repository
+}
+
+func New(repo recipe.Repository) *Saver {
+	return &Saver{
+		repo: repo,
+	}
+}
+
+func (s *Saver) Execute(ctx context.Context, cmd SaveRecipeCommand) error {
+
+	settings := recipe.RecipeSettingsFromPrimitives(recipe.RecipeSettingsPrimitives{
+		FilmSimulation:       cmd.Settings.FilmSimulation,
+		DynamicRange:         cmd.Settings.DynamicRange,
+		Highlight:            cmd.Settings.Highlight,
+		Shadow:               cmd.Settings.Shadow,
+		Color:                cmd.Settings.Color,
+		NoiseReduction:       cmd.Settings.NoiseReduction,
+		Sharpening:           cmd.Settings.Sharpening,
+		Clarity:              cmd.Settings.Clarity,
+		GrainEffect:          cmd.Settings.GrainEffect,
+		ColorChromeEffect:    cmd.Settings.ColorChromeEffect,
+		ColorChromeBlue:      cmd.Settings.ColorChromeBlue,
+		WhiteBalance:         cmd.Settings.WhiteBalance,
+		Iso:                  cmd.Settings.Iso,
+		ExposureCompensation: cmd.Settings.ExposureCompensation,
+	})
+
+	new, err := recipe.Create(
+		cmd.ID,
+		cmd.Name,
+		settings,
+		cmd.Link,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if err := s.ensureRecipeDoesNotExist(ctx, new.ID()); err != nil {
+		return err
+	}
+
+	return s.repo.Save(ctx, new)
+}
+
+func (s *Saver) ensureRecipeDoesNotExist(ctx context.Context, id string) error {
+	ok, err := s.repo.Exists(ctx, id)
+
+	if err != nil {
+		return err
+	}
+
+	if ok {
+		return fmt.Errorf("recipe with id %s already exists", id)
+	}
+
+	return nil
+}
