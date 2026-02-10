@@ -20,7 +20,7 @@ build:
 # Run the application (compiles and runs in module mode)
 run:
 	@echo "Running $(APP_NAME) via 'go run'..."
-	@go run $(CMD_PATH)
+	@doppler run  -- go run $(CMD_PATH)
 
 # Alias for run (semantic)
 start: run
@@ -64,6 +64,7 @@ setup:
 	@echo "🔧 Installing Lefthook..."
 	@lefthook install
 	@echo "✅ Lefthook installed"
+	@doppler setup --project photography-api --config dev_personal
 
 precommit:
 	@echo "Running pre-commit hooks..."
