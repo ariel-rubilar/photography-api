@@ -12,6 +12,7 @@ import (
 	"github.com/ariel-rubilar/photography-api/internal/shared/infrastructure/http/middleware"
 	webhttp "github.com/ariel-rubilar/photography-api/internal/web/infrastructure/http"
 	"github.com/ariel-rubilar/photography-api/internal/web/usecases/photosearcher"
+	"github.com/gin-contrib/cors"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.uber.org/zap"
 
@@ -45,6 +46,7 @@ func NewGinEngine(cfg Config, providers *Providers) *gin.Engine {
 	e.NoRoute(handler.NoFound())
 	e.NoMethod(handler.NoMethod())
 
+	e.Use(cors.Default())
 	e.Use(
 		middleware.RequestID(),
 		middleware.Logger(providers.Logger),
